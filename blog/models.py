@@ -40,22 +40,28 @@ class Post(models.Model):
         return self.title
 
 
-#
-# class Comment(models.Model):
-#     """
-#     Django database model for comment feature
-#     """
-#
-#     # comment's author
-#     com_author = models.ForeignKey(User)
-#
-#     # comment's content (no longer than 500 symbols)
-#     com_content = models.TextField(max_length=500)
-#
-#     # submit a comment
-#     def com_submit(self):
-#         self.save()
-#
-#     # string representation returning comment's contenttypes
-#     def __str__(self):
-#         return self.com_content
+class Comment(models.Model):
+    """
+    Django database model for comment feature
+    """
+
+    # comment's author
+    # com_author = models.ForeignKey(User)
+
+    # associate comment with a Post
+    com_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    # comment's content (no longer than 500 symbols)
+    com_content = models.TextField(max_length=500)
+
+    # date of comment creation
+    com_created = models.DateTimeField(blank=True, null=True)
+
+    # submit a comment
+    def com_submit(self):
+        self.com_created = timezone.now()
+        self.save()
+
+    # string representation returning comment's contenttypes
+    def __str__(self):
+        return self.com_content
