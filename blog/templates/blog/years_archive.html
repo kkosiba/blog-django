@@ -12,7 +12,7 @@
         <p>By {{ post.author.name }}</p>
         <p>{{ post.content }}</p>
         <p> Published {{ post.published|date:"F j, Y" }}</p>
-    {% else %}
+    {% empty %}
         <p>No posts in {{ year }}</p>
     {% endfor %}
 {% endblock %}
