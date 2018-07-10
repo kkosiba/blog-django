@@ -9,9 +9,8 @@
 
     {% for post in lst_of_posts %}
         <p>{{ post.title }}</p>
-        <p>By {{ post.author.name }}</p>
+        <p><strong>Author:</strong> {{ post.author.name }}, published: {{ post.created|date:"F j, Y" }}</p>
         <p>{{ post.content }}</p>
-        <p> Published {{ post.published|date:"F j, Y" }}</p>
     {% empty %}
         <p>No posts in {{ year }}</p>
     {% endfor %}

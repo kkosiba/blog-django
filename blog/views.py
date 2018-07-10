@@ -6,7 +6,7 @@ from .models import Post
 
 
 def years_archive(request, year):
-    lst = Post.objects.filter(published__year=year)
+    lst = Post.objects.filter(created__year=year)
     context = {
         'year': year,
         'lst_of_posts': lst
