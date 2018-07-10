@@ -21,7 +21,7 @@ class Post(models.Model):
     Django database model for posts
     """
 
-    # author
+    # author (many Posts to one Author)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     # title
     title = models.CharField(max_length=300)
