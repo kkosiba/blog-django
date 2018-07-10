@@ -13,5 +13,13 @@ def years_archive(request, year):
     return render(request, 'blog/years_archive.html', context)
 
 
+def month_archive(request, month):
+    pass
+
+
+def post_detail(request, post_id):
+    pass
+
+
 def index(request):
     return HttpResponse("Welcome to the main page!")
