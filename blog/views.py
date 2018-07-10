@@ -14,13 +14,27 @@ def years_archive(request, year):
     return render(request, 'blog/years_archive.html', context)
 
 
-def month_archive(request, month):
+def month_archive(request, year, month):
+    lst = Post.objects.filter(created__year=year, created__month=month)
+    context = {
+        'year': year,
+        'month': month,
+        'lst_of_posts': lst
+    }
+    return render(request, 'blog/month_archive.html', context)
+
+def day_archive(request, year, month, day):
+    lst = Post.objects.filter(created__year=year, created__month=month, created__day=day)
+    context = {
+        'year': year,
+        'month': month,
+        'day': day,
+        'lst_of_posts': lst
+    }
+    return render(request, 'blog/day_archive.html', context)
+
+def post_key(request, key):
     pass
-
-
-def post_detail(request, post_id):
-    pass
-
 
 def index(request):
     return HttpResponse("Welcome to the main page!")

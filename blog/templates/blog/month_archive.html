@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Posts for {{ year }} / {{ month }}
+{% endblock %}
+
+{% block content %}
+    <h1>Posts in {{ year }} / {{ month }}</h1>
+
+    {% for post in lst_of_posts %}
+        <p>{{ post.title }}</p>
+        <p><strong>Author:</strong> {{ post.author.name }}, published: {{ post.created|date:"F j, Y" }}</p>
+        <p>{{ post.content }}</p>
+    {% empty %}
+        <p>No posts in {{ year }} / {{ month }}</p>
+    {% endfor %}
+{% endblock %}
