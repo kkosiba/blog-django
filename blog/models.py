@@ -28,13 +28,11 @@ class Post(models.Model):
     # post content
     content = models.TextField()
     # date of creation
-    created = models.DateField()
-    # date of publication
-    published = models.DateField(blank=True, null=True)
+    created = models.DateTimeField(blank=True, null=True)
 
     # method for publishing posts
     def submit(self):
-        self.published = timezone.now()
+        self.created = timezone.now()
         self.save()
 
     # string representation returning title of a post
