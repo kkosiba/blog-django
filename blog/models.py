@@ -28,9 +28,9 @@ class Post(models.Model):
     # post content
     content = models.TextField()
     # date of creation
-    created = models.DateTimeField(default=timezone.now)
+    created = models.DateField()
     # date of publication
-    published = models.DateTimeField(blank=True, null=True)
+    published = models.DateField(blank=True, null=True)
 
     # method for publishing posts
     def submit(self):
