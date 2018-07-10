@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Posts for {{ year }}
+{% endblock %}
+
+{% block content %}
+    <h1>Posts in {{ year }}</h1>
+
+    {% for post in lst_of_posts %}
+        <p>{{ post.title }}</p>
+        <p>By {{ post.author.name }}</p>
+        <p>{{ post.content }}</p>
+        <p> Published {{ post.published|date:"F j, Y" }}</p>
+    {% else %}
+        <p>No posts in {{ year }}</p>
+    {% endfor %}
+{% endblock %}
