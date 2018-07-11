@@ -7,9 +7,11 @@ from .models import Post
 
 def years_archive(request, year):
     lst = Post.objects.filter(created__year=year)
+    coms = lst.comments
     context = {
         'year': year,
-        'lst_of_posts': lst
+        'lst_of_posts': lst,
+        'lst_of_comments': coms
     }
     return render(request, 'blog/years_archive.html', context)
 
