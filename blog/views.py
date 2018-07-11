@@ -23,8 +23,10 @@ def month_archive(request, year, month):
     }
     return render(request, 'blog/month_archive.html', context)
 
+
 def day_archive(request, year, month, day):
-    lst = Post.objects.filter(created__year=year, created__month=month, created__day=day)
+    lst = Post.objects.filter(
+        created__year=year, created__month=month, created__day=day)
     context = {
         'year': year,
         'month': month,
@@ -33,8 +35,10 @@ def day_archive(request, year, month, day):
     }
     return render(request, 'blog/day_archive.html', context)
 
+
 def post_key(request, key):
     pass
+
 
 def index(request):
     return HttpResponse("Welcome to the main page!")
