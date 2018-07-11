@@ -49,13 +49,17 @@ class Comment(models.Model):
     # com_author = models.ForeignKey(User)
 
     # associate comment with a Post
-    com_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    com_post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name='comments')
 
     # comment's content (no longer than 500 symbols)
     com_content = models.TextField(max_length=500)
 
     # date of comment creation
     com_created = models.DateTimeField(blank=True, null=True)
+
+    # approved?
+    com_approved = models.BooleanField(default=False)
 
     # submit a comment
     def com_submit(self):
