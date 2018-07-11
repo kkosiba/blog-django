@@ -11,6 +11,14 @@
         <p>{{ post.title }}</p>
         <p><strong>Author:</strong> {{ post.author.name }}, published: {{ post.created|date:"F j, Y" }}</p>
         <p>{{ post.content }}</p>
+        <p><strong>Comments:</strong></p>
+        <hr>
+        {% for comment in lst_of_comments %}
+            <p> {{ comment.com_content }} </p>
+            <hr>
+        {% empty %}
+            <p>No comments yet</p>
+        {%endfor %}
     {% empty %}
         <p>No posts in {{ year }}</p>
     {% endfor %}
