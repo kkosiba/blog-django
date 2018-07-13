@@ -23,21 +23,36 @@ class Post(models.Model):
 
     # author (many Posts to one Author)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    # # comments
+    # comments = models.ForeignKey(Comment, on_delete=models.CASCADE)
+
     # title
     title = models.CharField(max_length=300)
+
     # post content
     content = models.TextField()
-    # date of creation
-    created = models.DateTimeField(blank=True, null=True)
 
-    # method for publishing posts
-    def submit(self):
-        self.created = timezone.now()
-        self.save()
+    # tags
+    # tags = models.ManyToManyField(Tag)
+
+    # date of publication
+    published_date = models.DateTimeField(blank=True, null=True)
 
     # string representation returning title of a post
     def __str__(self):
         return self.title
+
+
+# class Tag(models.Model):
+#     """
+#     Django database model for tag system
+#     """
+#     # tag name
+#     tag_name = models.CharField(max_length=20)
+#
+#     def __str__(self):
+#         return self.tag_name
 
 
 class Comment(models.Model):
@@ -45,27 +60,27 @@ class Comment(models.Model):
     Django database model for comment feature
     """
 
-    # comment's author
-    # com_author = models.ForeignKey(User)
+    # author of a comment
+    author = models.CharField(max_length=70)
 
-    # associate comment with a Post
-    com_post = models.ForeignKey(
+    # associate comment with a post
+    post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name='comments')
 
     # comment's content (no longer than 500 symbols)
-    com_content = models.TextField(max_length=500)
+    content = models.TextField(max_length=500)
 
     # date of comment creation
-    com_created = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(default=timezone.now)
 
     # approved?
-    com_approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
 
-    # submit a comment
-    def com_submit(self):
-        self.com_created = timezone.now()
+    # approve comment
+    def approve(self):
+        self.approved = True
         self.save()
 
-    # string representation returning comment's contenttypes
+    # string representation returning comment's content
     def __str__(self):
-        return self.com_content
+        return self.content

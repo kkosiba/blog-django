@@ -5,16 +5,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Posts in {{ year }}</h1>
-
-    {% for post in lst_of_posts %}
-        <p>{{ post.title }}</p>
+    <h1><b>Archived posts:</b> <i>{{ year }}</i></h1>
+    <hr>
+    {% for post in posts %}
+        <h5>{{ post.title }}</h5>
         <p><strong>Author:</strong> {{ post.author.name }}, published: {{ post.created|date:"F j, Y" }}</p>
         <p>{{ post.content }}</p>
-        <p><strong>Comments:</strong></p>
         <hr>
-        {% for comment in lst_of_comments %}
-            <p> {{ comment.com_content }} </p>
+        <h5><b>Comments:</b></h5>
+        {% for comment in comments.all %}
+            <p> {{ comment.content }} </p>
             <hr>
         {% empty %}
             <p>No comments yet</p>
