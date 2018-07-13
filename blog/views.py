@@ -1,10 +1,8 @@
-# from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 
-# from .forms import PostForm
-
-from .models import Post
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 
 # Create your views here.
 
@@ -62,20 +60,33 @@ def add(request):
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            post_author = form.cleaned_data['author']
-            post_title = form.cleaned_data['title']
-            post_content = form.cleaned_data['content']
+            author = form.cleaned_data['author']
+            title = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+            published_date = timezone.now()
             # post_tags = form.cleaned_data['tags']
 
-            Post.create(post_title
+            Post.objects.create(
+                author, title, content, published_date)
             # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            return redirect('/')
     # if a GET (or any other method) we'll create a blank form
     else:
         form = PostForm()
 
     return render(request, 'blog/add.html', {'form': form})
-    pass
+
+# # adding comments functionality
+# def add_comment(request, post):
+#     form = CommentForm(request.POST)
+#     if form.is_valid():
+#         author = form.cleaned_data['author']
+#         content = form.cleaned_data['content']
+#         post.comments.objects.create(author, content)
+#     else:
+#         form = CommentForm()
+#
+#     return render(request, 'blog/add_comment.html', {'form': form})
 
 
 def index(request):
