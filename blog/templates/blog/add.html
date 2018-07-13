@@ -5,16 +5,9 @@
 {% block content %}
 <h3>Add a new post</h3>
 <hr>
-<form action="/add/" role="form" method="post">
+<form action="/add/" class="form-horizontal" role="form" method="post">
     {% csrf_token %}
-
-    <div class="form-group">
-        <textarea class="form-control" rows="3" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-success">Submit</button>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-    <!-- 
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form> -->
 {% endblock %}
