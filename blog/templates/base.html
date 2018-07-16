@@ -17,7 +17,16 @@
 
 <body>
     <div class="container">
+
         <header>
+            <div>
+                {% if user.is_authenticated %}
+                    Logged in as: <b>{{ user.get_username }}</b>
+                    <a href="{% url 'logout'%}?next={{request.path}}"><b>Logout</b></a>
+                {% else %}
+                    <a href="{% url 'login'%}?next={{request.path}}"><b>Login</b></a>
+                {% endif %}
+            </div>
             <br>
             <div class="row align-items-start">
                 <div class="col-6">
