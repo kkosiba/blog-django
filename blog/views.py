@@ -4,8 +4,12 @@ from django.utils import timezone
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
 
-# Create your views here.
+# from django.contrib.auth import logout
 
+# Create your views here.
+# 
+# def logout_view(request):
+#     logout(request)
 
 def years_archive(request, year):
     # posts = Post.objects.filter(created__year=year)
