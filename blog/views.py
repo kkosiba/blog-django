@@ -4,12 +4,9 @@ from django.utils import timezone
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
 
-# from django.contrib.auth import logout
+# for restricting access to adding post feature
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-# 
-# def logout_view(request):
-#     logout(request)
 
 def years_archive(request, year):
     # posts = Post.objects.filter(created__year=year)
@@ -56,6 +53,7 @@ def thanks(request):
     pass
 
 
+@login_required
 def add(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
