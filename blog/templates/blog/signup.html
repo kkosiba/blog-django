@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} Sign Up {% endblock %}
+
+{% block content %}
+
+<form class="form-horizontal" method="post" action="">
+    {% csrf_token %}
+    {{ form.username }}
+    {{ form.email }}
+    {{ form.password }}
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+</form>
+
+{% endblock %}
