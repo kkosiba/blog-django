@@ -1,8 +1,31 @@
-from django.forms import ModelForm, Select, TextInput, Textarea, DateTimeInput
-from .models import Post, Comment
+from django.forms import ModelForm, Select, Textarea, DateTimeInput
+from django.forms import PasswordInput, EmailInput, TextInput
+
+from django.contrib.auth.models import User
+from .models import Post
 
 
-class PostForm(ModelForm):
+class CreateUserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        widgets = {
+            'username': TextInput(attrs={'class': 'form-control',
+                                         'required': True,
+                                         'placeholder': 'Username'
+                                         }),
+            'email': EmailInput(attrs={'class': 'form-control',
+                                       'required': True,
+                                       'placeholder': 'Email'
+                                       }),
+            'password': PasswordInput(attrs={'class': 'form-control',
+                                             'required': True,
+                                             'placeholder': 'Password'
+                                             })
+        }
+
+
+class CreatePostForm(ModelForm):
     class Meta:
         model = Post
         fields = ('author', 'title', 'content', 'published_date')
@@ -20,7 +43,7 @@ class PostForm(ModelForm):
         }
 
 
-class CommentForm(ModelForm):
-    class Meta:
-        model = Comment
-        fields = ('author', 'content')
+# class CreateCommentForm(ModelForm):
+#     class Meta:
+#         model = Comment
+#         fields = ('author', 'content')
