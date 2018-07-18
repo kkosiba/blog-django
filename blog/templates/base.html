@@ -6,64 +6,59 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
     <title>{% block title %} {% endblock %}</title>
 </head>
 
 <body>
-<div class="container">
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="h5 nav-link" href="/">Blog title</a>
-                </li>
-                <li class="nav-item">
-                    <a class="h5 nav-link" href="/about/">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="h5 nav-link" href="/archive/">Archive</a>
-                </li>
-                <li class="nav-item">
-                    <a class="h5 nav-link" href="/contact/">Contact</a>
-                </li>
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="h5 nav-link" href="/post/add/">Add post</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
 
-        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-            <ul class="navbar-nav ml-auto">
+    <div class="container">
+        <header class="blog-header py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 pt-1">
+                    <a class="text-muted" href="#">RSS</a>
+                </div>
+                <div class="col-4 text-center">
+                    <a class="h3 blog-header-logo text-dark" href="/">Blog title</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center">
                 {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <div class="nav-link active">
-                        User: <b>{{ user.get_username }}</b>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'logout' %}?next={{request.path}}" class="nav-link">Logout</a>
-                </li>
+                <div>
+                    Logged as: <b>{{ user.get_username }}</b>
+                </div>
+                <a href="{% url 'logout' %}?next={{request.path}}" class="btn btn-sm btn-outline-secondary">Logout</a>
                 {% else %}
-                <li class="nav-item">
-                    <a href="{% url 'login' %}?next={{request.path}}" class="nav-link">Login</a></li>
-                </li>
-                <li class="nav-item">
-                    <a href="/" class="nav-link">Register</a></li>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+                <a href="{% url 'login' %}?next={{request.path}}" class="btn btn-sm btn-outline-secondary">Login</a>
 
-    <div style="padding:1rem;">
-    {% block content %} {% endblock %}
+                <a class="btn btn-sm btn-outline-secondary" href="/signup/">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="nav-scroller py-1 mb-2">
+        <nav class="nav d-flex justify-content-between">
+            <a class="p-2 text-muted" href="/about/">About</a>
+            <a class="p-2 text-muted" href="#">Subpage</a>
+            <a class="p-2 text-muted" href="#">Subpage</a>
+            <a class="p-2 text-muted" href="#">Subpage</a>
+            <a class="p-2 text-muted" href="/contact/">Contact</a>
+            {% if user.is_authenticated %}
+            <a class="btn btn-primary" href="/post/add/">Add post</a>
+            {% endif %}
+        </nav>
     </div>
 
-    <footer>
-        <p><a href="#">RSS feed</a></p>
+    <div>
+        {% block content %} {% endblock %}
+    </div>
+
+    <footer class="blog-footer">
+        <p>Copyright &copy; {% now "Y" %} by Author </p>
+        <p><a href="#">Back to top</a></p>
     </footer>
 </div>
 </body>

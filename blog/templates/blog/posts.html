@@ -7,7 +7,7 @@
 
 {% for post in list_of_posts %}
 <h2>{{ post.title }}</h2>
-<h5> Posted by {{ post.author.name }}, {{ post.published_date|date:"F j, Y" }}.</h5>
+<h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
 <p>{{ post.content }}</p>
 
 <a data-toggle="collapse" href="#comment_{{ post.pk }}">Comments ({{ post.comments.count }})</a>
@@ -15,7 +15,7 @@
     {% for comment in post.comments.all %}
         {% if comment.approved == True %} <!-- display approved comments only! -->
             <div class="card card-body">
-                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i:s" }}</small></h4>
+                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i" }}</small></h4>
                 <p>{{ comment.content }}</p>
             </div>
             <br>
@@ -29,17 +29,15 @@
     {% endfor %}
 </div>
 
+{% if user.is_authenticated %}
 <a data-toggle="collapse" href="#add-comment_{{ post.pk }}">Leave a Comment</a>
 <div class="collapse" id="add-comment_{{ post.pk }}">
-    <form role="form">
-        <br>
-        <div class="form-group">
-            <textarea class="form-control" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">Submit</button>
-    </form>
+    <object type="text/html" data="add_comment.html"></object>
 </div>
-
+{% else %}
+<p>Please login to post comments</p>
+{% endif %}
+<hr>
 {% empty %}
 <p>No posts.</p>
 {% endfor %}
