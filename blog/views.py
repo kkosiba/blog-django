@@ -1,98 +1,96 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from .models import Post, Comment
-from .forms import PostForm, CommentForm
+# for user management
+from django.contrib.auth.models import User
+# for post management
+from .models import Post
+
+from .forms import CreatePostForm
+from .forms import CreateCommentForm
 
 # for restricting access to adding post feature
 from django.contrib.auth.decorators import login_required
 
+# for user creation
+from .forms import CreateUserForm
 
-def years_archive(request, year):
-    # posts = Post.objects.filter(created__year=year)
-    # comments = Post.comments
-    # context = {
-    #     'year': year,
-    #     'posts': posts,
-    #     'comments': comments
-    # }
-    # return render(request, 'blog/years_archive.html', context)
-    pass
+from django.contrib.auth import login
+
+from django.shortcuts import get_object_or_404
 
 
-def month_archive(request, year, month):
-    # lst = Post.objects.filter(created__year=year, created__month=month)
-    # context = {
-    #     'year': year,
-    #     'month': month,
-    #     'lst_of_posts': lst
-    # }
-    # return render(request, 'blog/month_archive.html', context)
-    pass
+def signup(request):
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            # prepare data in cleaned form
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            # save user to database
+            user = User.objects.create_user(
+                username=username, email=email, password=password)
+
+            # login user after signup
+            login(request, user)
+            # and redirect to the main page
+            return redirect('/')
+    else:
+        form = CreateUserForm()
+
+    return render(request, 'blog/signup.html', {'form': form})
 
 
-def day_archive(request, year, month, day):
-    # lst = Post.objects.filter(
-    #     created__year=year, created__month=month, created__day=day)
-    # context = {
-    #     'year': year,
-    #     'month': month,
-    #     'day': day,
-    #     'lst_of_posts': lst
-    # }
-    # return render(request, 'blog/day_archive.html', context)
-    pass
-
-
-def post_key(request, key):
-    pass
-
-
-def thanks(request):
-    # return HttpResponse("Your post has been submitted. Thank you!")
-    pass
-
-
+# adding posts feature
 @login_required
 def add(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = PostForm(request.POST)
+        form = CreatePostForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            author = form.cleaned_data['author']
+            author = User.objects.get_by_natural_key(request.user.username)
             title = form.cleaned_data['title']
             content = form.cleaned_data['content']
             published_date = timezone.now()
             # post_tags = form.cleaned_data['tags']
 
-            Post.objects.create(
-                author, title, content, published_date)
-            # redirect to a new URL:
+            Post.objects.create(author=author, title=title,
+                                content=content, published_date=published_date)
+            # redirect to main page
+            # todo: redirect to just added post
             return redirect('/')
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = PostForm()
+        form = CreatePostForm()
 
     return render(request, 'blog/add.html', {'form': form})
 
-# # adding comments functionality
-# def add_comment(request, post):
-#     form = CommentForm(request.POST)
-#     if form.is_valid():
-#         author = form.cleaned_data['author']
-#         content = form.cleaned_data['content']
-#         post.comments.objects.create(author, content)
-#     else:
-#         form = CommentForm()
-#
-#     return render(request, 'blog/add_comment.html', {'form': form})
+
+# adding comments feature
+@login_required
+def add_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CreateCommentForm(request.POST)
+        if form.is_valid():
+            # get currently logged user
+            author = User.objects.get_by_natural_key(request.user.username)
+            content = form.cleaned_data['content']
+            post.comments.objects.create(author=author, content=content)
+            return redirect('/')
+    else:
+        form = CreateCommentForm()
+
+    return render(request, 'blog/add_comment.html', {'form': form})
 
 
 def index(request):
-    list_of_posts = Post.objects.order_by('published_date')
+    list_of_posts = Post.objects.order_by('-published_date')
     context = {
         'list_of_posts': list_of_posts
     }
@@ -101,10 +99,6 @@ def index(request):
 
 def about(request):
     return render(request, 'blog/about.html', {})
-
-
-def archive(request):
-    return render(request, 'blog/archive.html', {})
 
 
 def contact(request):
