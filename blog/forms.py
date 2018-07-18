@@ -3,6 +3,7 @@ from django.forms import PasswordInput, EmailInput, TextInput
 
 from django.contrib.auth.models import User
 from .models import Post
+from .models import Comment
 
 
 class CreateUserForm(ModelForm):
@@ -28,22 +29,24 @@ class CreateUserForm(ModelForm):
 class CreatePostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ('author', 'title', 'content', 'published_date')
+        fields = ('title', 'content',)
         widgets = {
-            'author': Select(attrs={'class': 'form-control',
-                                    'required': True}),
             'title': TextInput(attrs={'class': 'form-control',
                                       'required': True,
-                                      'placeholder': 'Post title'
+                                      'placeholder': 'Type your title here..'
                                       }),
             'content': Textarea(attrs={'class': 'form-control',
                                        'required': True,
-                                       'placeholder': 'Contents'}),
-            'published_date': DateTimeInput()  # this needs to be improved...
+                                       'placeholder': 'Type your post here..'}),
         }
 
 
-# class CreateCommentForm(ModelForm):
-#     class Meta:
-#         model = Comment
-#         fields = ('author', 'content')
+class CreateCommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)
+        widgets = {
+            'content': TextInput(attrs={'class': 'form-control',
+                                        'required': True,
+                                        'placeholder': 'Your comment'})
+        }
