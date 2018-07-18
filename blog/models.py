@@ -1,19 +1,8 @@
 from django.db import models
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 # Create your models here.
-
-
-class Author(models.Model):
-    """
-    Django database model for post's author
-    """
-    # author's name (assuming names <=70 symbols)
-    name = models.CharField(max_length=70)
-
-    def __str__(self):
-        return self.name
 
 
 class Post(models.Model):
@@ -21,8 +10,9 @@ class Post(models.Model):
     Django database model for posts
     """
 
-    # author (many Posts to one Author)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    # author (many Posts to one User)
+    # only Users can be post authors
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # # comments
     # comments = models.ForeignKey(Comment, on_delete=models.CASCADE)
@@ -61,7 +51,8 @@ class Comment(models.Model):
     """
 
     # author of a comment
-    author = models.CharField(max_length=70)
+    # author = models.CharField(max_length=70)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # associate comment with a post
     post = models.ForeignKey(
