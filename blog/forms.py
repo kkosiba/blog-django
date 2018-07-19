@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Select, Textarea, DateTimeInput
+from django.forms import ModelForm, Textarea, SelectMultiple
 from django.forms import PasswordInput, EmailInput, TextInput
 
 from django.contrib.auth.models import User
@@ -7,6 +7,10 @@ from .models import Comment
 
 
 class CreateUserForm(ModelForm):
+    password_confirm = PasswordInput(attrs={'class': 'form-control',
+                                             'required': True,
+                                             'placeholder': 'Confirm password'
+                                             })
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
@@ -22,14 +26,14 @@ class CreateUserForm(ModelForm):
             'password': PasswordInput(attrs={'class': 'form-control',
                                              'required': True,
                                              'placeholder': 'Password'
-                                             })
+                                             }),
         }
 
 
 class CreatePostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'content',)
+        fields = ('title', 'content', 'category')
         widgets = {
             'title': TextInput(attrs={'class': 'form-control',
                                       'required': True,
@@ -38,6 +42,8 @@ class CreatePostForm(ModelForm):
             'content': Textarea(attrs={'class': 'form-control',
                                        'required': True,
                                        'placeholder': 'Type your post here..'}),
+            'category': SelectMultiple(attrs={'class': 'form-control',
+                                       'required': True}),
         }
 
 
