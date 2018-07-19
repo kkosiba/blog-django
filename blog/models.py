@@ -2,13 +2,30 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+
 # Create your models here.
+
+class Category(models.Model):
+    """
+    Django database model for categories of Posts
+    """
+
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'  # to have 'Categories' in admin panel
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
     """
     Django database model for posts
     """
+
+    # posts' category (many-to-many)
+    category = models.ManyToManyField(Category, blank=False)
 
     # author (many Posts to one User)
     # only Users can be post authors
@@ -32,17 +49,6 @@ class Post(models.Model):
     # string representation returning title of a post
     def __str__(self):
         return self.title
-
-
-# class Tag(models.Model):
-#     """
-#     Django database model for tag system
-#     """
-#     # tag name
-#     tag_name = models.CharField(max_length=20)
-#
-#     def __str__(self):
-#         return self.tag_name
 
 
 class Comment(models.Model):
