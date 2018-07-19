@@ -5,6 +5,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 # for post management
 from .models import Post
+# for Categories
+from .models import Category
 
 from .forms import CreatePostForm
 from .forms import CreateCommentForm
@@ -17,7 +19,10 @@ from .forms import CreateUserForm
 
 from django.contrib.auth import login
 
-from django.shortcuts import get_object_or_404
+# for signup exception handling
+from django.core.exceptions import ValidationError
+
+# register new user
 
 
 def signup(request):
@@ -28,6 +33,14 @@ def signup(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            password_confirm = form.cleaned_data['password_confirm']
+
+            if User.objects.filter(username=username).count() > 1:
+                raise ValidationError('Username already in use!')
+            if User.objects.filter(email=email).count() > 1:
+                raise ValidationError('Email already exists!')
+            if password != password_confirm:
+                raise ValidationError('Passwords do not match!')
 
             # save user to database
             user = User.objects.create_user(
@@ -35,6 +48,7 @@ def signup(request):
 
             # login user after signup
             login(request, user)
+
             # and redirect to the main page
             return redirect('/')
     else:
@@ -53,14 +67,17 @@ def add(request):
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
+            category = form.cleaned_data['category']
             author = User.objects.get_by_natural_key(request.user.username)
             title = form.cleaned_data['title']
             content = form.cleaned_data['content']
             published_date = timezone.now()
-            # post_tags = form.cleaned_data['tags']
 
-            Post.objects.create(author=author, title=title,
-                                content=content, published_date=published_date)
+            # this needs to be fixed to account for new ManyToMany relation with category
+            Post.objects.create(category=category, author=author,
+                                title=title, content=content,
+                                published_date=published_date)
+
             # redirect to main page
             # todo: redirect to just added post
             return redirect('/')
@@ -86,15 +103,41 @@ def add_comment(request, pk):
     else:
         form = CreateCommentForm()
 
-    return render(request, 'blog/add_comment.html', {'form': form})
+    return render(request, 'blog/posts.html', {'form': form})
 
 
-def index(request):
+def index(request, category=''):
     list_of_posts = Post.objects.order_by('-published_date')
+
+    if category != '':
+        list_of_posts = list_of_posts.filter(category__name__contains=category)
+
+    page = 'blog/posts.html'
+
     context = {
         'list_of_posts': list_of_posts
     }
-    return render(request, 'blog/posts.html', context)
+    return render(request, page, context)
+
+
+def category1(request):
+    return index(request=request, category='1')
+
+
+def category2(request):
+    return index(request=request, category='2')
+
+
+def category3(request):
+    return index(request=request, category='3')
+
+
+def category4(request):
+    return index(request=request, category='4')
+
+
+def category5(request):
+    return index(request=request, category='5')
 
 
 def about(request):
