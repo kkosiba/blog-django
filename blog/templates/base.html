@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
     <title>{% block title %} {% endblock %}</title>
 </head>
 
@@ -19,21 +20,22 @@
         <header class="blog-header py-3">
             <div class="row flex-nowrap justify-content-between align-items-center">
                 <div class="col-4 pt-1">
-                    <a class="text-muted" href="#">RSS</a>
+                    <a class="text-muted" href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a>
                 </div>
                 <div class="col-4 text-center">
                     <a class="h3 blog-header-logo text-dark" href="/">Blog title</a>
                 </div>
                 <div class="col-4 d-flex justify-content-end align-items-center">
                 {% if user.is_authenticated %}
-                <div>
-                    Logged as: <b>{{ user.get_username }}</b>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
+                    <a href="{% url 'logout' %}?next={{ request.path }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
                 </div>
-                <a href="{% url 'logout' %}?next={{request.path}}" class="btn btn-sm btn-outline-secondary">Logout</a>
                 {% else %}
-                <a href="{% url 'login' %}?next={{request.path}}" class="btn btn-sm btn-outline-secondary">Login</a>
-
-                <a class="btn btn-sm btn-outline-secondary" href="/signup/">Register</a>
+                <div class="btn-group btn-group-sm" role="group">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
+                    <a href="/signup/" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
+                </div>
                 {% endif %}
             </div>
         </div>
