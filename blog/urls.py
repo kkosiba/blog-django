@@ -1,4 +1,5 @@
 from django.urls import path
+from blog.feeds import LastEntriesFeed
 
 from . import views
 
@@ -13,4 +14,6 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('', views.index, name='index'),
+    path('post/<int:pk>/', views.single_post, name='single_post'),
+    path('latest/feed/', LastEntriesFeed()),
 ]
