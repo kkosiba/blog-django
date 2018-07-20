@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 # for user management
@@ -20,7 +20,7 @@ from .forms import CreateUserForm
 from django.contrib.auth import login
 
 # for signup exception handling
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 # register new user
 
@@ -113,11 +113,16 @@ def index(request, category=''):
         list_of_posts = list_of_posts.filter(category__name__contains=category)
 
     page = 'blog/posts.html'
-
     context = {
         'list_of_posts': list_of_posts
     }
     return render(request, page, context)
+
+
+def single_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    page = 'blog/single_post.html'
+    return render(request, page, {'post': post})
 
 
 def category1(request):
