@@ -6,13 +6,14 @@
 {% block content %}
 
 {% for post in list_of_posts %}
-<h2>{{ post.title }}</h2>
+<br>
+<a href="{% url 'single_post' pk=post.pk %}"><h2>{{ post.title }}</h2></a>
 <h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
 <p>{{ post.content }}</p>
 <p>
     <b>Tags:</b>
     {% for category in post.category.all %}
-    <a href="/{{category.name.lower}}/" class="btn btn-primary btn-sm">{{ category.name }}</a>
+        <a href="/{{ category.name.lower }}/" class="btn btn-primary btn-sm">{{ category.name }}</a>
     {% endfor %}
 </p>
 <hr>
@@ -40,8 +41,11 @@
             </div>
             <br>
         {% endif %}
+        {% empty %}
+        <p>No comments yet.</p>
     {% endfor %}
 </div>
+<hr>
 {% empty %}
 <p>No posts.</p>
 {% endfor %}
