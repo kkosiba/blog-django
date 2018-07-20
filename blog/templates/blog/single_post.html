@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %} {{post.title}} | Blog title {% endblock %}
+
+
+{% block content %}
+
+<a href="{% url 'single_post' pk=post.pk %}"><h2>{{ post.title }}</h2></a>
+<h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
+<p>{{ post.content }}</p>
+<p>
+    <b>Tags:</b>
+    {% for category in post.category.all %}
+    <a href="/{{category.name.lower}}/" class="btn btn-primary btn-sm">{{ category.name }}</a>
+    {% endfor %}
+</p>
+<hr>
+<a data-toggle="collapse" href="#comment_{{ post.pk }}">Toggle comments ({{ post.comments.count }})</a>
+<div class="collapse" id="comment_{{ post.pk }}">
+    {% if user.is_authenticated %}
+    <div>
+        <!-- comment posting form placeholder -->
+    </div>
+    {% else %}
+    <p>Please login to post comments</p>
+    {% endif %}
+
+    {% for comment in post.comments.all %}
+        {% if comment.approved == True %} <!-- display approved comments only! -->
+            <div class="card card-body">
+                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i" }}</small></h4>
+                <p>{{ comment.content }}</p>
+            </div>
+            <br>
+        {% else %}
+            <div class="card card-body">
+                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i:s" }}</small></h4>
+                <p>Comment was not approved.</p>
+            </div>
+            <br>
+        {% endif %}
+    {% endfor %}
+</div>
+<hr>
+{% endblock %}
