@@ -17,40 +17,34 @@ from django.contrib.auth.decorators import login_required
 # for user creation
 from .forms import CreateUserForm
 
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login, logout
 
 # for signup exception handling
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
+
 
 # register new user
-
-
 def signup(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
+            form.save()
             # prepare data in cleaned form
             username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            password_confirm = form.cleaned_data['password_confirm']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
 
-            if User.objects.filter(username=username).count() > 1:
-                raise ValidationError('Username already in use!')
-            if User.objects.filter(email=email).count() > 1:
-                raise ValidationError('Email already exists!')
-            if password != password_confirm:
-                raise ValidationError('Passwords do not match!')
-
-            # save user to database
-            user = User.objects.create_user(
-                username=username, email=email, password=password)
+            # if User.objects.filter(username=username).count() > 1:
+            #     raise ValidationError('Username already in use!')
+            # if User.objects.filter(email=email).count() > 1:
+            #     raise ValidationError('Email already exists!')
+            # if password != password_confirm:
+            #     raise ValidationError('Passwords do not match!')
 
             # login user after signup
             login(request, user)
-
             # and redirect to the main page
-            return redirect('/')
+            return redirect('signup_successful.html')  # doesn't work... yet
     else:
         form = CreateUserForm()
 
@@ -123,6 +117,26 @@ def single_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     page = 'blog/single_post.html'
     return render(request, page, {'post': post})
+
+
+def year(request, year):
+    list_of_posts = Post.objects.order_by(
+        '-published_date').filter(published_date__year=year)
+    page = 'blog/year_posts.html'
+    context = {
+        'list_of_posts': list_of_posts
+    }
+    return render(request, page, context)
+
+
+def year_month(request, year, month):
+    list_of_posts = Post.objects.order_by(
+        '-published_date').filter(published_date__year=year).filter(published_date__month=month)
+    page = 'blog/year_month_posts.html'
+    context = {
+        'list_of_posts': list_of_posts
+    }
+    return render(request, page, context)
 
 
 def category1(request):
