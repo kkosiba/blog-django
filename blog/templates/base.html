@@ -15,55 +15,74 @@
 </head>
 
 <body>
-
     <div class="container">
-        <header class="blog-header py-3">
-            <div class="row flex-nowrap justify-content-between align-items-center">
-                <div class="col-4 pt-1">
-                    <a class="text-muted" href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a>
+        <header>
+            <div class="row">
+                <div class="col-sm-8 text-left">
+                    <a class="header-title text-dark" href="/">Blog title</a>
+                    <p class="pl-4"><em>Some smaller text, quote or whatever...</em></p>
                 </div>
-                <div class="col-4 text-center">
-                    <a class="h3 blog-header-logo text-dark" href="/">Blog title</a>
+                <div class="col-sm-4 text-right pt-4">
+                    {% if user.is_authenticated %}
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
+                        <a href="{% url 'logout' %}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
+                    </div>
+                    {% else %}
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="col-4 d-flex justify-content-end align-items-center">
-                {% if user.is_authenticated %}
-                <div class="btn-group btn-group-sm" role="group">
-                    <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
-                    <a href="{% url 'logout' %}?next={{ request.path }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
-                </div>
-                {% else %}
-                <div class="btn-group btn-group-sm" role="group">
-                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
-                    <a href="/signup/" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
-                </div>
-                {% endif %}
             </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="nav-scroller py-1 mb-2">
-        <nav class="nav d-flex justify-content-between">
-            <a class="p-2 text-muted" href="/category 1/">Category 1</a>
-            <a class="p-2 text-muted" href="/category 2/">Category 2</a>
-            <a class="p-2 text-muted" href="/category 3/">Category 3</a>
-            <a class="p-2 text-muted" href="/category 4/">Category 4</a>
-            <a class="p-2 text-muted" href="/category 5/">Category 5</a>
-            <a class="p-2 text-muted" href="/contact/">Contact</a>
+        <nav class="nav justify-content-between m-2">
+            <a class="btn" href="/category 1/">Category 1</a>
+            <a class="btn" href="/category 2/">Category 2</a>
+            <a class="btn" href="/category 3/">Category 3</a>
+            <a class="btn" href="/category 4/">Category 4</a>
+            <a class="btn" href="/category 5/">Category 5</a>
+            <a class="btn" href="/contact/">Contact</a>
             {% if user.is_authenticated %}
             <a class="btn btn-primary" href="/add/">Add post</a>
             {% endif %}
         </nav>
-    </div>
 
-    <div>
-        {% block content %} {% endblock %}
-    </div>
+        <div class="row">
+            <div class="col-md-9">
+                {% block content %} {% endblock %}
+            </div>
 
-    <footer class="blog-footer">
-        <p>Copyright &copy; {% now "Y" %} by Author </p>
-        <p><a href="#">Back to top</a></p>
-    </footer>
-</div>
+            <div class="col-md-3">
+                <h4 class="text-center">About</h4>
+                <p>
+                    Urna taciti fusce platea arcu pellentesque luctus accumsan,
+                    nostra himenaeos curae condimentum fames natoque, faucibus quis
+                    litora magnis integer feugiat.
+                </p>
+                <hr>
+                <h4 class="text-center">Archives</h4>
+                <ol class="list-unstyled">
+                    <li><a href="#">July 2018</a></li> <!-- not implemented yet -->
+                </ol>
+                <hr>
+                <h4 class="text-center">Search</h4> <!-- not implemented yet -->
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Seek and you will find...">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Copyright &copy; {% now "Y" %} by Author </p>
+            <p><a href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a></p>
+            <p><a href="#">Back to top</a></p>
+        </footer>
+    </div>
 </body>
-
 </html>
