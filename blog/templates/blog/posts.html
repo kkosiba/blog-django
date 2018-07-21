@@ -6,15 +6,17 @@
 {% block content %}
 
 {% for post in list_of_posts %}
-<br>
 <a href="{% url 'single_post' pk=post.pk %}"><h2>{{ post.title }}</h2></a>
 <h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
 <p>{{ post.content }}</p>
 <p>
-    <b>Tags:</b>
+
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-success active"><b>Tags</b></button>
     {% for category in post.category.all %}
-        <a href="/{{ category.name.lower }}/" class="btn btn-primary btn-sm">{{ category.name }}</a>
+        <a href="/{{ category.name.lower }}/" class="btn btn-outline-primary btn-sm">{{ category.name }}</a>
     {% endfor %}
+    </div>
 </p>
 <hr>
 <a data-toggle="collapse" href="#comment_{{ post.pk }}">Toggle comments ({{ post.comments.count }})</a>
