@@ -1,33 +1,38 @@
 from django.forms import ModelForm, Textarea, SelectMultiple
 from django.forms import PasswordInput, EmailInput, TextInput
 
+from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import Post
 from .models import Comment
 
 
-class CreateUserForm(ModelForm):
-    password_confirm = PasswordInput(attrs={'class': 'form-control',
-                                             'required': True,
-                                             'placeholder': 'Confirm password'
-                                             })
+class CreateUserForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
-        widgets = {
-            'username': TextInput(attrs={'class': 'form-control',
-                                         'required': True,
-                                         'placeholder': 'Username'
-                                         }),
-            'email': EmailInput(attrs={'class': 'form-control',
-                                       'required': True,
-                                       'placeholder': 'Email'
-                                       }),
-            'password': PasswordInput(attrs={'class': 'form-control',
-                                             'required': True,
-                                             'placeholder': 'Password'
-                                             }),
-        }
+        fields = ('username', 'email', 'password1', 'password2',)
+        # widgets = {
+        #     'username': TextInput(attrs={'class': 'form-control',
+        #                                  'required': True,
+        #                                  'placeholder': 'Username'
+        #                                  }),
+        #     'email': EmailInput(attrs={'class': 'form-control',
+        #                                'required': True,
+        #                                'placeholder': 'Email'
+        #                                }),
+        #     'password1': PasswordInput(attrs={'class': 'form-control',
+        #                                       'required': True,
+        #                                       'placeholder': 'Password'
+        #                                       }),
+        #     'password2': PasswordInput(attrs={'class': 'form-control',
+        #                                       'required': True,
+        #                                       'placeholder': 'Confirm password'
+        #                                       }),
+        # }
 
 
 class CreatePostForm(ModelForm):
@@ -43,7 +48,7 @@ class CreatePostForm(ModelForm):
                                        'required': True,
                                        'placeholder': 'Type your post here..'}),
             'category': SelectMultiple(attrs={'class': 'form-control',
-                                       'required': True}),
+                                              'required': True}),
         }
 
 
