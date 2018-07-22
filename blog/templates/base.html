@@ -67,14 +67,15 @@
                 <ol class="list-unstyled">
                     <li><a href="#">July 2018</a></li> <!-- not implemented yet -->
                 </ol>
-                <hr>
-                <h4 class="text-center">Search</h4> <!-- not implemented yet -->
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Seek and you will find...">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
+                <hr>          
+                <form method="GET" action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search posts..." name="search" value="{{ request.GET.search }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
 
