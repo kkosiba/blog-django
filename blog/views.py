@@ -22,6 +22,8 @@ from django.contrib.auth import authenticate, login, logout
 # for signup exception handling
 from django.core.exceptions import ValidationError
 
+# complex lookups (for searching)
+from django.db.models import Q
 
 # register new user
 def signup(request):
@@ -106,6 +108,12 @@ def index(request, category=''):
     if category != '':
         list_of_posts = list_of_posts.filter(category__name__contains=category)
 
+    search = request.GET.get('search')
+    if search:
+        list_of_posts = list_of_posts.filter(
+            Q(category__name__icontains=search) | Q(author__username__icontains=search) |
+            Q(title__icontains=search) | Q(content__icontains=search)
+        ).distinct()
     page = 'blog/posts.html'
     context = {
         'list_of_posts': list_of_posts
