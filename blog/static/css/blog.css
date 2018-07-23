@@ -1,5 +1,5 @@
 .container {
-    max-width: 75%;
+    max-width: 80%;
 }
 
 .header-title {
@@ -27,22 +27,6 @@ h1, h2, h3, h4, h5, h6 {
     .blog-title {
         font-size: 3.5rem;
     }
-}
-
-/* Pagination */
-
-.blog-post {
-    margin-bottom: 4rem;
-}
-
-.blog-post-title {
-    margin-bottom: .25rem;
-    font-size: 2.5rem;
-}
-
-.blog-post-meta {
-    margin-bottom: 1.25rem;
-    color: #999;
 }
 
 /* Footer */
