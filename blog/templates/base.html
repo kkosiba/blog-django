@@ -16,39 +16,11 @@
 
 <body>
     <div class="container">
-        <header>
-            <div class="row">
-                <div class="col-sm-8 text-left">
-                    <a class="header-title text-dark" href="/">Blog title</a>
-                    <p class="pl-4"><em>Some smaller text, quote or whatever...</em></p>
-                </div>
-                <div class="col-sm-4 text-right pt-4">
-                    {% if user.is_authenticated %}
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
-                        <a href="{% url 'logout' %}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
-                    </div>
-                    {% else %}
-                    <div class="btn-group btn-group-sm" role="group">
-                        <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
-                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </header>
+        <!-- HEADER -->
+        {% include 'blog/header.html' %}
 
-        <nav class="nav justify-content-between m-2">
-            <a class="btn" href="/category 1/">Category 1</a>
-            <a class="btn" href="/category 2/">Category 2</a>
-            <a class="btn" href="/category 3/">Category 3</a>
-            <a class="btn" href="/category 4/">Category 4</a>
-            <a class="btn" href="/category 5/">Category 5</a>
-            <a class="btn" href="/contact/">Contact</a>
-            {% if user.is_authenticated %}
-            <a class="btn btn-primary" href="/add/">Add post</a>
-            {% endif %}
-        </nav>
+        <!-- NAV BAR -->
+        {% include 'blog/navbar.html' %}
 
         <div class="row">
             <div class="col-md-9">
@@ -68,9 +40,9 @@
                     <li><a href="#">July 2018</a></li> <!-- not implemented yet -->
                 </ol>
                 <hr>          
-                <form method="GET" action="">
+                <form method="GET" action="{% url 'search' %}">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search posts..." name="search" value="{{ request.GET.search }}">
+                        <input type="text" class="form-control" placeholder="Search posts..." name="q">
                         <div class="input-group-append">
                             <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
                         </div>
@@ -79,11 +51,8 @@
             </div>
         </div>
 
-        <footer>
-            <p>Copyright &copy; {% now "Y" %} by Author </p>
-            <p><a href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a></p>
-            <p><a href="#">Back to top</a></p>
-        </footer>
+        <!-- FOOTER -->
+        {% include 'blog/footer.html' %}
     </div>
 </body>
 </html>
