@@ -1,0 +1,21 @@
+<header>
+    <div class="row">
+        <div class="col-sm-8 text-left">
+            <a class="header-title text-dark" href="/">Blog title</a>
+            <p class="pl-4"><em>Some smaller text, quote or whatever...</em></p>
+        </div>
+        <div class="col-sm-4 text-right pt-4">
+            {% if user.is_authenticated %}
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
+                <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
+            </div>
+            {% else %}
+            <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'login' %}?next={{ request.path | urlencode }}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
