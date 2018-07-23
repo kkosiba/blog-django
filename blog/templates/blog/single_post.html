@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} {{post.title}} | Blog title {% endblock %}
+{% block title %} {{ post.title }} | Blog title {% endblock %}
 
 
 {% block content %}
@@ -9,36 +9,54 @@
 <h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
 <p>{{ post.content }}</p>
 <p>
-    <b>Tags:</b>
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-success active"><b>Tags</b></button>
     {% for category in post.category.all %}
-    <a href="/{{category.name.lower}}/" class="btn btn-primary btn-sm">{{ category.name }}</a>
+        <a href="/{{ category.name.lower }}/" class="btn btn-outline-primary">{{ category.name }}</a>
     {% endfor %}
-</p>
-<hr>
-<a data-toggle="collapse" href="#comment_{{ post.pk }}">Toggle comments ({{ post.comments.count }})</a>
-<div class="collapse" id="comment_{{ post.pk }}">
-    {% if user.is_authenticated %}
-    <div>
-        <!-- comment posting form placeholder -->
     </div>
-    {% else %}
-    <p>Please login to post comments</p>
-    {% endif %}
 
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-info active"><b>Social media</b></button>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com/home?status={{ parsed_content }}%20{{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-twitter"></i></a>
+        <a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-google-plus-g"></i></a>
+    </div>
+<hr>
+
+<div>
+    {% if user.is_authenticated %}
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {{ form.content }}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+    {% else %}
+    <p>Please login to post comments.</p>
+    {% endif %}
+        <h3>Other comments:</h3>
     {% for comment in post.comments.all %}
         {% if comment.approved == True %} <!-- display approved comments only! -->
-            <div class="card card-body">
-                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i" }}</small></h4>
-                <p>{{ comment.content }}</p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.author }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.created|date:"H:i" }}</h6>
+                    <p class="card-text">{{ comment.content }}</p>
+                </div>
             </div>
             <br>
         {% else %}
-            <div class="card card-body">
-                <h4>{{ comment.author }} <small>{{ comment.created|date:"H:i:s" }}</small></h4>
-                <p>Comment was not approved.</p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.author }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.created|date:"H:i" }}</h6>
+                    <p class="card-text">Comment was not approved.</p>
+                </div>
             </div>
             <br>
         {% endif %}
+        {% empty %}
+        <p>No comments yet.</p>
     {% endfor %}
 </div>
 <hr>
