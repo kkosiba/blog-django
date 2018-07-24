@@ -53,37 +53,6 @@ def signup(request):
     return render(request, 'blog/signup.html', {'form': form})
 
 
-# adding posts feature
-@login_required
-def add(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = CreatePostForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            category = form.cleaned_data['category']
-            author = User.objects.get_by_natural_key(request.user.username)
-            title = form.cleaned_data['title']
-            content = form.cleaned_data['content']
-            published_date = timezone.now()
-
-            # this needs to be fixed to account for new ManyToMany relation with category
-            Post.objects.create(category=category, author=author,
-                                title=title, content=content,
-                                published_date=published_date)
-
-            # redirect to main page
-            # todo: redirect to just added post
-            return redirect('/')
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = CreatePostForm()
-
-    return render(request, 'blog/add.html', {'form': form})
-
-
 # adding comments feature
 @login_required
 def add_comment(request, pk):
@@ -102,69 +71,91 @@ def add_comment(request, pk):
     return render(request, 'blog/posts.html', {'form': form})
 
 
-def index(request, category=''):
-    list_of_posts = Post.objects.order_by('-published_date')
+def index(request, category=None, year=None, month=None, slug=None):
+    list_of_posts = Post.objects.all()
 
-    if category != '':
+    if category is not None:
+        list_of_posts = list_of_posts.filter(category__name__icontains=category)
+    if year is not None:
+        list_of_posts = list_of_posts.filter(published_date__year=year)
+    if month is not None:
+        list_of_posts = list_of_posts.filter(published_date__month=month)
+    if slug is not None:
         list_of_posts = list_of_posts.filter(category__name__contains=category)
+
+    template = 'blog/posts.html'
+    context = {
+        'list_of_posts': list_of_posts,
+    }
+    return render(request, template, context)
+
+
+def single_post(request, slug):
+    return index(request, slug=slug)
+
+
+def year(request, year):
+    return index(request, year=year)
+
+
+def year_month(request, year, month):
+    return index(request, year=year, month=month)
+
+
+def category1(request):
+    return index(request=request, category='Category 1')
+
+
+def category2(request):
+    return index(request=request, category='Category 2')
+
+
+def category3(request):
+    return index(request=request, category='Category 3')
+
+
+@login_required
+def add(request):
+    """
+    View for adding new posts (only for authenticated users)
+    """
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = CreatePostForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            # TODO
+            # redirect to main page
+            # todo: redirect to just added post
+            return redirect('/')
+    # if a GET (or any other method), create a blank form
+    else:
+        form = CreatePostForm()
+
+    return render(request, 'blog/add.html', {'form': form})
+
+
+def search(request):
+    list_of_posts = Post.objects.all()
+    page = 'blog/posts.html'
 
     search = request.GET.get('search')
     if search:
         list_of_posts = list_of_posts.filter(
-            Q(category__name__icontains=search) | Q(author__username__icontains=search) |
-            Q(title__icontains=search) | Q(content__icontains=search)
+            Q(category__name__icontains=search) |
+            Q(author__username__icontains=search) |
+            Q(title__icontains=search) |
+            Q(content__icontains=search)
         ).distinct()
-    page = 'blog/posts.html'
+    else:
+        return render(request, page, {})
+
     context = {
-        'list_of_posts': list_of_posts
+        'list_of_posts': list_of_posts,
     }
     return render(request, page, context)
-
-
-def single_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    page = 'blog/single_post.html'
-    return render(request, page, {'post': post})
-
-
-def year(request, year):
-    list_of_posts = Post.objects.order_by(
-        '-published_date').filter(published_date__year=year)
-    page = 'blog/year_posts.html'
-    context = {
-        'list_of_posts': list_of_posts
-    }
-    return render(request, page, context)
-
-
-def year_month(request, year, month):
-    list_of_posts = Post.objects.order_by(
-        '-published_date').filter(published_date__year=year).filter(published_date__month=month)
-    page = 'blog/year_month_posts.html'
-    context = {
-        'list_of_posts': list_of_posts
-    }
-    return render(request, page, context)
-
-
-def category1(request):
-    return index(request=request, category='1')
-
-
-def category2(request):
-    return index(request=request, category='2')
-
-
-def category3(request):
-    return index(request=request, category='3')
-
-
-def category4(request):
-    return index(request=request, category='4')
-
-
-def category5(request):
-    return index(request=request, category='5')
 
 
 def about(request):
