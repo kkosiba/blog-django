@@ -25,6 +25,14 @@ from django.core.exceptions import ValidationError
 # complex lookups (for searching)
 from django.db.models import Q
 
+from django.urls import reverse_lazy
+
+# class based views
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+
+
 # register new user
 def signup(request):
     if request.method == 'POST':
@@ -71,6 +79,42 @@ def add_comment(request, pk):
     return render(request, 'blog/posts.html', {'form': form})
 
 
+class ListPostsView(ListView):
+    model = Post
+    context_object_name = 'list_posts'
+    template_name = 'blog/post_actions/list_posts.html'
+    paginate_by = 3
+    ordering = ('-published_date',)
+
+
+class ListPostsByYearView(ListPostsView):
+    def get_queryset(self):
+        """
+        Filter by year if it is provided in GET parameters
+        """
+        return super().get_queryset().filter(
+            published_date__year=self.kwargs.get('year', None))
+        # if 'year' in self.request.GET:
+        #     queryset = queryset.filter(
+        #         published_date__year=self.request.GET['year'])
+
+
+class ListPostsByYearMonthView(ListPostsByYearView):
+    def get_queryset(self):
+        """
+        Filter by year and month if it is provided in GET parameters
+        """
+        queryset = super().get_queryset(self)
+        if 'month' in self.request.GET:
+            queryset = queryset.filter(
+                published_date__month=self.request.GET['month'])
+
+
+class DetailsPostView(DetailView):
+    model = Post
+    template_name = 'blog/post_actions/single_post.html'
+
+
 def index(request, category=None, year=None, month=None, slug=None):
     list_of_posts = Post.objects.all()
 
@@ -83,15 +127,11 @@ def index(request, category=None, year=None, month=None, slug=None):
     if slug is not None:
         list_of_posts = list_of_posts.filter(category__name__contains=category)
 
-    template = 'blog/posts.html'
+    template = 'blog/post_actions/list_posts.html'
     context = {
         'list_of_posts': list_of_posts,
     }
     return render(request, template, context)
-
-
-def single_post(request, slug):
-    return index(request, slug=slug)
 
 
 def year(request, year):
@@ -102,39 +142,74 @@ def year_month(request, year, month):
     return index(request, year=year, month=month)
 
 
-def category1(request):
-    return index(request=request, category='Category 1')
+def category(request, name):
+    return index(request=request, category=name)
 
 
-def category2(request):
-    return index(request=request, category='Category 2')
+class AddPostView(CreateView):
+    model = Post
+    model_form = CreatePostForm
+    fields = ('category', 'author', 'title', 'content', )
 
 
-def category3(request):
-    return index(request=request, category='Category 3')
+class DeletePostView(DeleteView):
+    model = Post
+    success_url = reverse_lazy('index')
+
+
+class UpdatePostView(CreateView):
+    model = Post
+    fields = ('category', 'title', 'content', )
+
+# def add_post(request):
+#     """
+#     View for adding new posts (only for authenticated users)
+#     """
+
+#     # create a form instance and populate it with data from the request
+#     # if a GET (or any other method), create a blank form
+#     form = CreatePostForm(request.POST or None)
+#     # check whether it's valid:
+#     if form.is_valid():
+#         form.save()
+#         form = CreatePostForm() # rerender the form
+
+#     template = 'blog/post_actions/add.html'
+#     context = {
+#         'form': form,
+#     }
+#     return render(request, template, context)
+
+
+
+# def delete_post(request, slug):
+#     """
+#     View for deleting posts by slug
+#     """
+#     post = get_object_or_404(Post, slug=slug)
+#     if request.method == 'POST':
+#         post.delete()
+#         redirect('/')
+
+#     template = 'blog/post_actions/delete.html'
+#     context = {
+#         'form': form,
+#     }
+#     return render(request, template, context)
 
 
 @login_required
-def add(request):
+def update_post(request, slug):
     """
-    View for adding new posts (only for authenticated users)
+    View for deleting posts by slug
     """
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = CreatePostForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            form.save()
-            # TODO
-            # redirect to main page
-            # todo: redirect to just added post
-            return redirect('/')
-    # if a GET (or any other method), create a blank form
-    else:
-        form = CreatePostForm()
+    # todo
 
-    return render(request, 'blog/add.html', {'form': form})
+    template = 'blog/post_actions/update.html'
+    context = {
+        'form': form,
+    }
+    return render(request, template, context)
 
 
 def search(request):
