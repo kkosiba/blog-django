@@ -36,19 +36,25 @@ class CreateUserForm(UserCreationForm):
 
 
 class CreatePostForm(ModelForm):
+
     class Meta:
         model = Post
         fields = ('title', 'content', 'category')
         widgets = {
-            'title': TextInput(attrs={'class': 'form-control',
-                                      'required': True,
-                                      'placeholder': 'Type your title here..'
-                                      }),
-            'content': Textarea(attrs={'class': 'form-control',
-                                       'required': True,
-                                       'placeholder': 'Type your post here..'}),
-            'category': SelectMultiple(attrs={'class': 'form-control',
-                                              'required': True}),
+            'title': TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'required': True,
+                    'placeholder': 'Type your title here..', }, ),
+            'content': Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'required': True,
+                    'placeholder': 'Type your post here..', }, ),
+            'category': SelectMultiple(
+                attrs={
+                    'class': 'form-control',
+                    'required': True, }, ),
         }
 
 
