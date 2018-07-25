@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %} Blog title {% endblock %}
+
+
+{% block content %}
+
+<form action="" class="form-horizontal" method="post">
+	{% csrf_token %}
+	{% for field in form %}
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<span class="text-danger small">{{ field.errors }}</span>
+		</div>
+		<label class="control-label col-sm-2">{{ field.label_tag }}</label>
+		<div class="col-sm-10">{{ field }}</div>
+	</div>
+	{% endfor %}
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-sm bt-primary">Submit</button>
+		</div>
+	</div>
+</form>
+
+{% endblock %}
