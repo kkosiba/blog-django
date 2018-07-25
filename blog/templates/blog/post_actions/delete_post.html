@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %} Delete Post #{{ post.pk }} {% endblock %}
+
+
+{% block content %}
+
+<a href="{% url 'single_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a>
+<h5> {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</h5>
+<p>{{ post.content }}</p>
+<p>
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-success active"><b>Tags</b></button>
+    {% for category in post.category.all %}
+        <a href="/{{ category.name.lower }}/" class="btn btn-outline-primary">{{ category.name }}</a>
+    {% endfor %}
+    </div>
+
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-info active"><b>Social media</b></button>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com/home?status={{ parsed_content }}%20{{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-twitter"></i></a>
+        <a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-google-plus-g"></i></a>
+    </div>
+
+    <!-- Post actions for authenticated users -->
+    {% if user.is_authenticated and post.author.username == request.user.username %}
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-info active"><b>Post actions</b></button>
+            <!-- Option to amend post for authenticated author -->
+            <div>
+                <a href="{% 'update_post' slug=post.slug %}" class="btn btn-warning">Update</a>
+            </div>
+
+            <!-- Option to delete post for authenticated author -->
+            <div>
+                <a href="{% 'delete_post' slug=post.slug %}" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    {% endif %}
+<hr>
+
+<div>
+    {% if user.is_authenticated %}
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {{ form.content }}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+    {% else %}
+    <p>Please login to post comments.</p>
+    {% endif %}
+        <h3>Other comments:</h3>
+    {% for comment in post.comments.all %}
+        {% if comment.approved == True %} <!-- display approved comments only! -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.author }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.created|date:"H:i" }}</h6>
+                    <p class="card-text">{{ comment.content }}</p>
+                </div>
+            </div>
+            <br>
+        {% else %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.author }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.created|date:"H:i" }}</h6>
+                    <p class="card-text">Comment was not approved.</p>
+                </div>
+            </div>
+            <br>
+        {% endif %}
+        {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+</div>
+<hr>
+{% endblock %}
