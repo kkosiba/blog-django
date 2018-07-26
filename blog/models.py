@@ -32,9 +32,15 @@ class Post(models.Model):
 
     # author (many Posts to one User)
     # only Users can be post authors
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts')
     title = models.CharField(max_length=300)
-    slug = models.SlugField(max_length=300, unique_for_date='published_date')
+    slug = models.SlugField(
+        max_length=300,
+        unique_for_date='published_date',
+        blank=True)
     content = models.TextField()
 
     published_date = models.DateTimeField(default=timezone.now)
@@ -56,12 +62,18 @@ class Comment(models.Model):
 
     # bind comment to author and post
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments')
 
     content = models.TextField(max_length=500)
 
     created_date = models.DateTimeField(default=timezone.now)
-    status = models.CharField(max_length=10, choices=CHOICES, default='rejected')
+    status = models.CharField(
+        max_length=10,
+        choices=CHOICES,
+        default='rejected')
 
     def __str__(self):
         return self.content

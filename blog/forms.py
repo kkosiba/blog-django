@@ -8,6 +8,8 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Post
 from .models import Comment
 
+from django.utils.text import slugify
+
 
 class CreateUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -35,11 +37,10 @@ class CreateUserForm(UserCreationForm):
         # }
 
 
-class CreatePostForm(ModelForm):
-
+class AddPostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'content', 'category')
+        exclude = ('slug',)
         widgets = {
             'title': TextInput(
                 attrs={
@@ -56,6 +57,25 @@ class CreatePostForm(ModelForm):
                     'class': 'form-control',
                     'required': True, }, ),
         }
+
+    def clean(self):
+        cleaned_data = super(AddPostForm, self).clean()
+        title = cleaned_data.get('title')
+        slug = cleaned_data.get('slug')
+
+        if not slug and title:
+            cleaned_data['slug'] = slugify(title)
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super(AddPostForm, self).save(commit=False)
+        instance.slug = slugify(self.cleaned_data.get('title', ''))
+
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
 
 class CreateCommentForm(ModelForm):

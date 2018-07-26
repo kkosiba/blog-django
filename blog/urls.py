@@ -15,20 +15,21 @@ urlpatterns = [
 
     # posts related
     path('', views.ListPostsView.as_view(), name='index'),
-    path('post/<slug:slug>/',
-         views.DetailsPostView.as_view(), name='single_post'),
+    path('posts/add/',
+         login_required(views.AddPostView.as_view()), name='add_post'),
+    path('posts/search/', views.search, name='search'),
     path('posts/<int:year>/',
          views.ListPostsByYearView, name='year'),
     path('posts/<int:year>/<int:month>/',
          views.ListPostsByYearMonthView.as_view(), name='year_month'),
-    path('posts/category/<str:name>/', views.category, name='category'),
-    path('posts/add/',
-         login_required(views.AddPostView.as_view()), name='add_post'),
+    path('posts/category/<str:name>/',
+         views.ListPostsByCategoryView.as_view(), name='category'),
+    path('posts/<slug:slug>/',
+         views.DetailsPostView.as_view(), name='single_post'),
     path('posts/<slug:slug>/delete/',
          login_required(views.DeletePostView.as_view()), name='delete_post'),
     path('posts/<slug:slug>/update/',
          login_required(views.UpdatePostView.as_view()), name='update_post'),
-    path('posts/search/', views.search, name='search'),
 
     # misc
     path('about/', views.about, name='about'),

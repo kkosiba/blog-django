@@ -8,7 +8,7 @@ from .models import Post
 # for Categories
 from .models import Category
 
-from .forms import CreatePostForm
+from .forms import AddPostForm
 from .forms import CreateCommentForm
 
 # for restricting access to adding post feature
@@ -87,17 +87,20 @@ class ListPostsView(ListView):
     ordering = ('-published_date',)
 
 
-class ListPostsByYearView(ListPostsView):
-    def get_queryset(self):
+class ListPostsByYearView(ListView):
+    model = Post
+    context_object_name = 'list_posts'
+    template_name = 'blog/post_actions/list_posts.html'
+    paginate_by = 3
+    ordering = ('-published_date',)
+
+    def get_context_data(self, *args, **kwargs):
         """
         Filter by year if it is provided in GET parameters
         """
-        return super().get_queryset().filter(
-            published_date__year=self.kwargs.get('year', None))
-        # if 'year' in self.request.GET:
-        #     queryset = queryset.filter(
-        #         published_date__year=self.request.GET['year'])
-
+        context = super(ListPostsByYearView, self).get_context_data(*args, **kwargs)
+        context['year'] = 2018
+        return context
 
 class ListPostsByYearMonthView(ListPostsByYearView):
     def get_queryset(self):
@@ -108,6 +111,10 @@ class ListPostsByYearMonthView(ListPostsByYearView):
         if 'month' in self.request.GET:
             queryset = queryset.filter(
                 published_date__month=self.request.GET['month'])
+
+
+class ListPostsByCategoryView(ListView):
+    pass
 
 
 class DetailsPostView(DetailView):
@@ -148,8 +155,7 @@ def category(request, name):
 
 class AddPostView(CreateView):
     model = Post
-    model_form = CreatePostForm
-    fields = ('category', 'author', 'title', 'content', )
+    form_class = AddPostForm
 
 
 class DeletePostView(DeleteView):
@@ -157,9 +163,10 @@ class DeletePostView(DeleteView):
     success_url = reverse_lazy('index')
 
 
-class UpdatePostView(CreateView):
+class UpdatePostView(UpdateView):
     model = Post
-    fields = ('category', 'title', 'content', )
+    form_class = AddPostForm
+
 
 # def add_post(request):
 #     """
