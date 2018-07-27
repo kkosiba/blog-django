@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} Blog title {% endblock %}
+
+
+{% block content %}
+<h3>All posts in ... </h3>
+<ul>
+{% for post in posts %}
+    <li> <a href="{% url 'single_post' slug=post.slug %}">{{ post.title }} </a></li>
+{% empty %}
+    <p>Nothing to display.</p>
+{% endfor %}
+</ul>
+{% endblock %}
