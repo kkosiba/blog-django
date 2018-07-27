@@ -1,14 +1,42 @@
 .container {
-    max-width: 80%;
+    max-width: 60%;
+}
+
+#header-avatar {
+    margin-top: 1rem;
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
 }
 
 .header-title {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: 'Source Serif Pro', serif;
     font-size: 2.25rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.post-title {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 2.5rem;
+    font-style: bold;
+}
+
+.post-content {
+    font-family: 'Source Serif Pro', serif;
+    font-size: 1.25rem;
+}
+
+.post-footer {
+    padding-left: 1rem;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.post-footer span {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 @media (min-width: 768px) {
@@ -29,15 +57,25 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+#archives {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
 /* Footer */
 
 footer {
-    padding: 2.5rem 0;
+    padding-top: 2.5rem;
     color: #999999;
     text-align: center;
-    background-color: #f9f9f9;
+    margin-bottom: 1rem;
 }
 
 footer p {
     margin-bottom: 0;
+}
+
+#bottom {
+    padding-top: 2.5rem;
 }
