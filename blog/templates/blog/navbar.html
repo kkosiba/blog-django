@@ -1,9 +1,0 @@
-<nav class="nav justify-content-between m-2">
-      <a class="btn" href="{% url 'category' name='1' %}">Category 1</a>
-      <a class="btn" href="{% url 'category' name='2' %}">Category 2</a>
-      <a class="btn" href="{% url 'category' name='3' %}">Category 3</a>
-      <a class="btn" href="{% url 'contact' %}">Contact</a>
-      {% if user.is_authenticated %}
-      <a class="btn btn-primary" href="{% url 'add_post' %}">Add post</a>
-      {% endif %}
-</nav>
