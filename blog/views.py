@@ -31,7 +31,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-
+from django.views.generic.base import TemplateView
 
 # register new user
 def signup(request):
@@ -83,38 +83,64 @@ class ListPostsView(ListView):
     model = Post
     context_object_name = 'list_posts'
     template_name = 'blog/post_actions/list_posts.html'
-    paginate_by = 3
+    paginate_by = 10
     ordering = ('-published_date',)
+
+
+class ListPostsByAuthor(ListView):
+    pass
 
 
 class ListPostsByYearView(ListView):
     model = Post
-    context_object_name = 'list_posts'
-    template_name = 'blog/post_actions/list_posts.html'
-    paginate_by = 3
+    template_name = 'blog/post_actions/list_posts_year.html'
+    paginate_by = 10
     ordering = ('-published_date',)
 
-    def get_context_data(self, *args, **kwargs):
-        """
-        Filter by year if it is provided in GET parameters
-        """
-        context = super(ListPostsByYearView, self).get_context_data(*args, **kwargs)
-        context['year'] = 2018
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(
+            published_date__year=self.kwargs.get('year', None))
         return context
 
-class ListPostsByYearMonthView(ListPostsByYearView):
-    def get_queryset(self):
-        """
-        Filter by year and month if it is provided in GET parameters
-        """
-        queryset = super().get_queryset(self)
-        if 'month' in self.request.GET:
-            queryset = queryset.filter(
-                published_date__month=self.request.GET['month'])
+
+class ListPostsByYearMonthView(ListView):
+    model = Post
+    template_name = 'blog/post_actions/list_posts_year_month.html'
+    paginate_by = 10
+    ordering = ('-published_date',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(
+            published_date__month=self.kwargs.get('month', None))
+        return context
+
+
+class ListCategoriesView(ListView):
+    model = Category
+    template_name = 'blog/post_actions/list_categories.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
 
 class ListPostsByCategoryView(ListView):
-    pass
+    template_name = 'blog/post_actions/list_posts_category.html'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category,
+            category=self.kwargs['category'])
+        return Post.objects.filter(category__name=self.category)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in the category
+        context['category'] = self.category.name
+        return context
 
 
 class DetailsPostView(DetailView):
@@ -122,40 +148,48 @@ class DetailsPostView(DetailView):
     template_name = 'blog/post_actions/single_post.html'
 
 
-def index(request, category=None, year=None, month=None, slug=None):
-    list_of_posts = Post.objects.all()
+# def index(request, category=None, year=None, month=None, slug=None):
+#     list_of_posts = Post.objects.all()
 
-    if category is not None:
-        list_of_posts = list_of_posts.filter(category__name__icontains=category)
-    if year is not None:
-        list_of_posts = list_of_posts.filter(published_date__year=year)
-    if month is not None:
-        list_of_posts = list_of_posts.filter(published_date__month=month)
-    if slug is not None:
-        list_of_posts = list_of_posts.filter(category__name__contains=category)
+#     if category is not None:
+#         list_of_posts = list_of_posts.filter(category__name__icontains=category)
+#     if year is not None:
+#         list_of_posts = list_of_posts.filter(published_date__year=year)
+#     if month is not None:
+#         list_of_posts = list_of_posts.filter(published_date__month=month)
+#     if slug is not None:
+#         list_of_posts = list_of_posts.filter(category__name__contains=category)
 
-    template = 'blog/post_actions/list_posts.html'
-    context = {
-        'list_of_posts': list_of_posts,
-    }
-    return render(request, template, context)
-
-
-def year(request, year):
-    return index(request, year=year)
+#     template = 'blog/post_actions/list_posts.html'
+#     context = {
+#         'list_of_posts': list_of_posts,
+#     }
+#     return render(request, template, context)
 
 
-def year_month(request, year, month):
-    return index(request, year=year, month=month)
+# def year(request, year):
+#     return index(request, year=year)
 
 
-def category(request, name):
-    return index(request=request, category=name)
+# def year_month(request, year, month):
+#     return index(request, year=year, month=month)
+
+
+# def category(request, name):
+#     return index(request=request, category=name)
 
 
 class AddPostView(CreateView):
     model = Post
     form_class = AddPostForm
+
+    def get_form_kwargs(self):
+        """
+        Override to get currently authenticated user as post author
+        """
+        kwargs = super(AddPostView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
 
 class DeletePostView(DeleteView):
@@ -168,76 +202,23 @@ class UpdatePostView(UpdateView):
     form_class = AddPostForm
 
 
-# def add_post(request):
-#     """
-#     View for adding new posts (only for authenticated users)
-#     """
+class SearchPostsView(ListView):
+    model = Post
+    context_object_name = 'list_posts'
+    template_name = 'blog/post_actions/search_posts.html'
+    paginate_by = 10
+    ordering = ('-published_date',)
 
-#     # create a form instance and populate it with data from the request
-#     # if a GET (or any other method), create a blank form
-#     form = CreatePostForm(request.POST or None)
-#     # check whether it's valid:
-#     if form.is_valid():
-#         form.save()
-#         form = CreatePostForm() # rerender the form
-
-#     template = 'blog/post_actions/add.html'
-#     context = {
-#         'form': form,
-#     }
-#     return render(request, template, context)
-
-
-
-# def delete_post(request, slug):
-#     """
-#     View for deleting posts by slug
-#     """
-#     post = get_object_or_404(Post, slug=slug)
-#     if request.method == 'POST':
-#         post.delete()
-#         redirect('/')
-
-#     template = 'blog/post_actions/delete.html'
-#     context = {
-#         'form': form,
-#     }
-#     return render(request, template, context)
-
-
-@login_required
-def update_post(request, slug):
-    """
-    View for deleting posts by slug
-    """
-    # todo
-
-    template = 'blog/post_actions/update.html'
-    context = {
-        'form': form,
-    }
-    return render(request, template, context)
-
-
-def search(request):
-    list_of_posts = Post.objects.all()
-    page = 'blog/posts.html'
-
-    search = request.GET.get('search')
-    if search:
-        list_of_posts = list_of_posts.filter(
-            Q(category__name__icontains=search) |
-            Q(author__username__icontains=search) |
-            Q(title__icontains=search) |
-            Q(content__icontains=search)
-        ).distinct()
-    else:
-        return render(request, page, {})
-
-    context = {
-        'list_of_posts': list_of_posts,
-    }
-    return render(request, page, context)
+    def get_queryset(self):
+        search_query = self.request.GET.get('q', None)
+        results = []
+        if search_query:
+            results = Post.objects.filter(
+                Q(category__name__icontains=search_query) |
+                Q(author__username__icontains=search_query) |
+                Q(title__icontains=search_query) |
+                Q(content__icontains=search_query)).distinct()
+        return results
 
 
 def about(request):
