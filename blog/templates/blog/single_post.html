@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load comments %}
+
+{% block title %} {{ post.title }} | Blog title {% endblock %}
+
+
+{% block content %}
+<div class="text-left post-header">
+    <a href="{% url 'single_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
+
+    <!-- Social media stuff -->
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-info active"><b>Social media</b></button>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com/home?status={{ parsed_content }}%20{{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-twitter"></i></a>
+        <a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-google-plus-g"></i></a>
+    </div>
+</div>
+
+<div class="post-content">
+    {{ post.content }}
+</div>
+
+<div class="row text-left post-footer my-4">
+    <span><b>Author:</b>&nbsp; <a href="/">{{ post.author.email }}</a></span>
+    <div class="dropdown">
+        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+            <b>Categories</b>
+        </a>
+        <div class="dropdown-menu">
+            {% for category in post.category.all %}
+                <a class="dropdown-item" href="{% url 'category' name=category.name %}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <span><b>Posted:</b>&nbsp; {{ post.published_date|date:"F j, Y" }}</span>
+
+    <!-- Post actions for authenticated users -->
+    {% if user.is_authenticated and post.author.username == request.user.username %}
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-info active"><b>Post actions</b></button>
+            <!-- Amend post for authenticated author -->
+            <a href="{% url 'update_post' slug=post.slug %}" class="btn btn-outline-warning">Update</a>
+            <!-- Delete post for authenticated author -->
+            <a href="{% url 'delete_post' slug=post.slug %}" class="btn btn-outline-danger">Delete</a>
+        </div>
+    {% endif %}
+</div>
+<hr>
+{% if post.allow_comments %}
+    <div class="comment">
+        <h4 class="text-center">Your comment</h4>
+        <div class="well">
+            {% render_comment_form for post %}
+        </div>
+    </div>
+    {% get_comment_count for post as comment_count %}
+        <div class="text-center" style="padding-top:20px">
+            <a href="{% url 'index' %}">Back to the post list</a>
+            &nbsp;&sdot;&nbsp;
+            {{ comment_count }} comments have been posted.
+        </div>
+    {% if comment_count %}
+        <hr/>
+        <div class="comments">
+            {% render_comment_list for post %}
+        </div>
+    {% endif %}
+{% else %}
+    <p>Comments are disabled for this post.</p>
+{% endif %}
+
+{% endblock %}

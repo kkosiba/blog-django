@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load comments %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+
+{% for post in list_posts %}
+    {% if post.status != 'DRAFT' %}
+        <a href="{% url 'single_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
+        <p class="post-content">
+            {{ post.content }}
+        </p>
+        <div class="row text-left post-footer">
+            <span><b>Author:</b>&nbsp; <a href="/">{{ post.author.email }}</a></span>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                    <b>Categories</b>
+                </a>
+                <div class="dropdown-menu">
+                    {% for category in post.category.all %}
+                        <a class="dropdown-item" href="{% url 'category' name=category.name %}">{{ category.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if post.allow_comments %}
+                <span>
+                    <b>{% get_comment_count for post as comment_count %}
+                        <a href="{% url 'single_post' slug=post.slug %}"> 
+                            {% if comment_count %}
+                               Comments ({{ comment_count }})
+                            {% else %}
+                                No comments yet
+                            {% endif %}
+                        </a>
+                    </b>&nbsp;
+                </span>
+            {% endif %}
+            <span><b>Posted:</b>&nbsp; {{ post.published_date|date:"F j, Y" }}</span>
+        </div>
+        <hr>
+    {% endif %}
+{% empty %}
+    <p>No posts.</p>
+{% endfor %}
+<!-- PAGINATION -->
+    {% include 'blog/pagination.html' %}
+{% endblock %}
