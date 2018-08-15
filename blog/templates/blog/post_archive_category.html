@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %} Posts in Category {{ category }} {% endblock %}
+
+{% block content %}
+
+<div>
+    <h1>All posts in Category {{ category }} </h1>
+    {% for obj in object_list %}
+        <p>
+            {{ obj.title }} - {{ obj.pub_date|date:"F j, Y" }}
+        </p>
+    {% endfor %}
+</div>
+
+{% endblock %}

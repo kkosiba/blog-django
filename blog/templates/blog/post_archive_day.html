@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %} Posts in {{ day|date:"F j, Y" }} {% endblock %}
+
+{% block content %}
+
+<h3>Archived posts in {{ day|date:"F j, Y" }}</h3>
+
+<ul>
+    {% for post in object_list %}
+        <li><a href="{% url 'single_post' slug=post.slug %}">{{ post.title }}</li>
+    {% endfor %}
+    {# post.published_date|date:"F j, Y" #} 
+</ul>
+
+<p>
+    {% if previous_day %}
+        Previous Day: {{ previous_day }}
+    {% endif %}
+    {% if previous_day and next_day %}--{% endif %}
+    {% if next_day %}
+        Next Day: {{ next_day }}
+    {% endif %}
+</p>
+
+{% endblock %}

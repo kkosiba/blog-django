@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Your drafts {% endblock %}
+
+{% block content %}
+
+<h3>Your drafts</h3>
+{% for post in list_posts %}
+    {% if post.status == 'DRAFT' %}
+        <a href="{% url 'update_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
+    {% endif %}
+{% empty %}
+    <p>No posts.</p>
+{% endfor %}
+<!-- PAGINATION -->
+    {% include 'blog/pagination.html' %}
+{% endblock %}

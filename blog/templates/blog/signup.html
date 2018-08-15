@@ -2,9 +2,11 @@
 
 {% block content %}
   <h2>Register a new account</h2>
-  <form method="post">
+  <form method="post" class="form-control">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
+    <p>{{ form.email }}</p>
+    <p>{{ form.password }}</p>
+    <p>{{ form.password2 }}</p>
+    <button class="btn btn-primary" type="Register">Register</button>
   </form>
 {% endblock %}
