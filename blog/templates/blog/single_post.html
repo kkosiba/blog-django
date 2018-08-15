@@ -9,6 +9,7 @@
 <div class="text-left post-header">
     <a href="{% url 'single_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
     <img src="{{ post.picture.url }}" class="img-fluid" />
+
     <!-- Social media stuff -->
     <div class="btn-group btn-group-sm" role="group">
         <button type="button" class="btn btn-info active"><b>Social media</b></button>
@@ -66,6 +67,9 @@
         <ul class="media-list">
             {% render_xtdcomment_tree for post %}
         </ul>
+	<div class="comments">
+            {% render_comment_list for post %}
+        </div>
     {% endif %}
 {% else %}
     <p>Comments are disabled for this post.</p>
