@@ -7,7 +7,7 @@
 
 {% for post in list_posts %}
     {% if post.status != 'DRAFT' %}
-        <a href="{% url 'single_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
+        <a href="{% url 'blog:details_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
         <p class="post-content">
             <img src="{{ post.picture.url }}" class="img-fluid img-thumbnail" />
             {{ post.content|linebreaks }}
@@ -20,14 +20,14 @@
                 </a>
                 <div class="dropdown-menu">
                     {% for category in post.category.all %}
-                        <a class="dropdown-item" href="{% url 'category' name=category.name %}">{{ category.name }}</a>
+                        <a class="dropdown-item" href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
                     {% endfor %}
                 </div>
             </div>
             {% if post.allow_comments %}
                 <span>
                     <b>{% get_comment_count for post as comment_count %}
-                        <a href="{% url 'single_post' slug=post.slug %}"> 
+                        <a href="{% url 'blog:details_post' slug=post.slug %}"> 
                             {% if comment_count %}
                                Comments ({{ comment_count }})
                             {% else %}

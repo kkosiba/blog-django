@@ -1,26 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-# for user management
-from django.contrib.auth.models import User
-# for post management
-from .models import Post
-# for Categories
-from .models import Category
+from .models import Post, Category
 
-from .forms import AddPostForm
-from .forms import CreateCommentForm
-
-# for restricting access to adding post feature
-from django.contrib.auth.decorators import login_required
-
-# for user creation
-from .forms import CreateUserForm
-
-from django.contrib.auth import authenticate, login, logout
-
-# for signup exception handling
-from django.core.exceptions import ValidationError
+from .forms import (
+    AddPostForm, ContactForm, SignUpForm)
 
 # complex lookups (for searching)
 from django.db.models import Q
@@ -28,98 +12,76 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 
 # class based views
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import (
+    CreateView, DeleteView,
+    UpdateView, FormView)
+
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 
-# register new user
-def signup(request):
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # prepare data in cleaned form
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
+from django.views.generic.dates import (
+    YearArchiveView, MonthArchiveView, DayArchiveView)
 
-            # if User.objects.filter(username=username).count() > 1:
-            #     raise ValidationError('Username already in use!')
-            # if User.objects.filter(email=email).count() > 1:
-            #     raise ValidationError('Email already exists!')
-            # if password != password_confirm:
-            #     raise ValidationError('Passwords do not match!')
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-            # login user after signup
-            login(request, user)
-            # and redirect to the main page
-            return redirect('signup_successful.html')  # doesn't work... yet
-    else:
-        form = CreateUserForm()
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
-    return render(request, 'blog/signup.html', {'form': form})
+class SignUp(CreateView):
+    template_name = 'registration/signup.html'
+    form_class = SignUpForm
+    success_url = reverse_lazy('login')
 
-
-# adding comments feature
-@login_required
-def add_comment(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        form = CreateCommentForm(request.POST)
-        if form.is_valid():
-            # get currently logged user
-            author = User.objects.get_by_natural_key(request.user.username)
-            content = form.cleaned_data['content']
-            post.comments.objects.create(author=author, content=content)
+    # prevents signed in user to sign up
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
             return redirect('/')
-    else:
-        form = CreateCommentForm()
-
-    return render(request, 'blog/posts.html', {'form': form})
+        return super().dispatch(*args, **kwargs)
 
 
-class ListPostsView(ListView):
+class ListPosts(ListView):
     model = Post
     context_object_name = 'list_posts'
-    template_name = 'blog/post_actions/list_posts.html'
+    template_name = 'blog/list_posts.html'
     paginate_by = 10
     ordering = ('-published_date',)
 
 
-class ListPostsByAuthor(ListView):
+class ListAuthors(ListView):
+    model = Post
+    template_name = 'blog/list_posts_author.html'
+    paginate_by = 10
+    ordering = ('-published_date',)
+
+
+class ListByAuthor(ListView):
     pass
 
 
-class ListPostsByYearView(ListView):
+class ListTags(ListView):
+    pass
+
+
+class ListByTag(ListView):
     model = Post
-    template_name = 'blog/post_actions/list_posts_year.html'
+    context_object_name = 'posts'
+    template_name = 'blog/list_by_tag.html'
     paginate_by = 10
     ordering = ('-published_date',)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['posts'] = Post.objects.filter(
-            published_date__year=self.kwargs.get('year', None))
-        return context
+    def get_queryset(self):
+        tag = self.kwargs.get('tag_name', None)
+        results = []
+        if tag:
+            results = Post.objects.filter(
+                tags__name=tag)
+        return results
 
 
-class ListPostsByYearMonthView(ListView):
-    model = Post
-    template_name = 'blog/post_actions/list_posts_year_month.html'
-    paginate_by = 10
-    ordering = ('-published_date',)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['posts'] = Post.objects.filter(
-            published_date__month=self.kwargs.get('month', None))
-        return context
-
-
-class ListCategoriesView(ListView):
+class ListCategories(ListView):
     model = Category
-    template_name = 'blog/post_actions/list_categories.html'
+    template_name = 'blog/list_categories.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -127,13 +89,13 @@ class ListCategoriesView(ListView):
         return context
 
 
-class ListPostsByCategoryView(ListView):
-    template_name = 'blog/post_actions/list_posts_category.html'
+class ListByCategory(ListView):
+    template_name = 'blog/post_archive_category.html'
 
     def get_queryset(self):
         self.category = get_object_or_404(Category,
             category=self.kwargs['category'])
-        return Post.objects.filter(category__name=self.category)
+        return Post.objects.filter(category__name=self.category.name)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -143,69 +105,81 @@ class ListPostsByCategoryView(ListView):
         return context
 
 
-class DetailsPostView(DetailView):
+class DetailsPost(DetailView):
     model = Post
-    template_name = 'blog/post_actions/single_post.html'
+    template_name = 'blog/details_post.html'
 
 
-# def index(request, category=None, year=None, month=None, slug=None):
-#     list_of_posts = Post.objects.all()
-
-#     if category is not None:
-#         list_of_posts = list_of_posts.filter(category__name__icontains=category)
-#     if year is not None:
-#         list_of_posts = list_of_posts.filter(published_date__year=year)
-#     if month is not None:
-#         list_of_posts = list_of_posts.filter(published_date__month=month)
-#     if slug is not None:
-#         list_of_posts = list_of_posts.filter(category__name__contains=category)
-
-#     template = 'blog/post_actions/list_posts.html'
-#     context = {
-#         'list_of_posts': list_of_posts,
-#     }
-#     return render(request, template, context)
+# Post archive views
+class PostYearArchive(YearArchiveView):
+    queryset = Post.objects.all()
+    date_field = "published_date"
+    make_object_list = True
+    allow_future = True
 
 
-# def year(request, year):
-#     return index(request, year=year)
+class PostYearMonthArchive(MonthArchiveView):
+    queryset = Post.objects.all()
+    date_field = "published_date"
+    allow_future = True
 
 
-# def year_month(request, year, month):
-#     return index(request, year=year, month=month)
+class PostYearMonthDayArchive(DayArchiveView):
+    queryset = Post.objects.all()
+    date_field = "published_date"
+    allow_future = True
 
 
-# def category(request, name):
-#     return index(request=request, category=name)
-
-
-class AddPostView(CreateView):
+# Create, delete and update post views
+class AddPost(LoginRequiredMixin, CreateView):
     model = Post
     form_class = AddPostForm
 
-    def get_form_kwargs(self):
-        """
-        Override to get currently authenticated user as post author
-        """
-        kwargs = super(AddPostView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
+    # to process request.user in the form
+    def form_valid(self, form):
+        form.save(commit=False)
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
-class DeletePostView(DeleteView):
+# not yet implemented
+class PostDraftsList(LoginRequiredMixin, ListView):
+    template_name = 'blog/list_drafts.html'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category,
+            category=self.kwargs['category'])
+        return Post.objects.filter(status='DRAFT',
+                                   author__email=self.request.username)
+
+
+class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('blog:index')
+
+    def test_func(self):
+        """
+        Only let the user delete object if they own the object being deleted
+        """
+        return self.get_object().author.first_name == self.request.user.first_name
 
 
-class UpdatePostView(UpdateView):
+class UpdatePost(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = AddPostForm
 
+    def test_func(self):
+        """
+        Only let the user update object if they own the object being updated
 
-class SearchPostsView(ListView):
+        """
+        return self.get_object().author.first_name == self.request.user.first_name
+
+
+class SearchPosts(ListView):
     model = Post
     context_object_name = 'list_posts'
-    template_name = 'blog/post_actions/search_posts.html'
+    template_name = 'blog/search_posts.html'
     paginate_by = 10
     ordering = ('-published_date',)
 
@@ -215,15 +189,40 @@ class SearchPostsView(ListView):
         if search_query:
             results = Post.objects.filter(
                 Q(category__name__icontains=search_query) |
-                Q(author__username__icontains=search_query) |
+                Q(author__email__icontains=search_query) |
                 Q(title__icontains=search_query) |
                 Q(content__icontains=search_query)).distinct()
         return results
 
 
-def about(request):
-    return render(request, 'blog/about.html', {})
+class About(TemplateView):
+    template_name = 'blog/about.html'
 
 
-def contact(request):
-    return render(request, 'blog/contact.html', {})
+class Contact(FormView):
+    template_name = 'blog/contact.html'
+    form_class = ContactForm
+    success_url = 'success/'
+
+    def form_valid(self, form):
+        form.send_email()
+        return super().form_valid(form)
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'profiles/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })

@@ -37,8 +37,32 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_comments_xtd',
+    'django_comments',
+    'taggit',
     'blog',
 ]
+SITE_ID = 1
+COMMENTS_APP = 'django_comments_xtd'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# comment depth & ordering
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+
+# require comment confirmation by email for no logged-in users
+COMMENTS_XTD_CONFIRM_EMAIL = False
+
+#  To help obfuscating comments before they are sent for confirmation.
+COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
+                     b"Aequam memento rebus in arduis servare mentem.")
+
+# Source mail address used for notifications.
+COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+
+# Contact mail address to show in messages.
+COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,9 +145,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# ...and media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Redirect to '/' after login/logout
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # SECURE_SSL_REDIRECT = True  # for https

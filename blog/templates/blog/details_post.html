@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="text-left post-header">
-    <a href="{% url 'single_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
+    <a href="{% url 'blog:details_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
     <img src="{{ post.picture.url }}" class="img-fluid" />
 
     <!-- Social media stuff -->
@@ -24,14 +24,14 @@
 </div>
 
 <div class="row text-left post-footer my-4">
-    <span><b>Author:</b>&nbsp; <a href="/">{{ post.author.email }}</a></span>
+    <span><b>Author:</b>&nbsp; <a href="/">{{ post.author.first_name }}</a></span>
     <div class="dropdown">
         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
             <b>Categories</b>
         </a>
         <div class="dropdown-menu">
             {% for category in post.category.all %}
-                <a class="dropdown-item" href="{% url 'category' name=category.name %}">{{ category.name }}</a>
+                <a class="dropdown-item" href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
             {% endfor %}
         </div>
     </div>
@@ -42,9 +42,9 @@
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn btn-info active"><b>Post actions</b></button>
             <!-- Amend post for authenticated author -->
-            <a href="{% url 'update_post' slug=post.slug %}" class="btn btn-outline-warning">Update</a>
+            <a href="{% url 'blog:update_post' slug=post.slug %}" class="btn btn-outline-warning">Update</a>
             <!-- Delete post for authenticated author -->
-            <a href="{% url 'delete_post' slug=post.slug %}" class="btn btn-outline-danger">Delete</a>
+            <a href="{% url 'blog:delete_post' slug=post.slug %}" class="btn btn-outline-danger">Delete</a>
         </div>
     {% endif %}
 </div>
@@ -58,7 +58,7 @@
     </div>
     {% get_comment_count for post as comment_count %}
         <div class="text-center" style="padding-top:20px">
-            <a href="{% url 'index' %}">Back to the post list</a>
+            <a href="{% url 'blog:index' %}">Back to the post list</a>
             &nbsp;&sdot;&nbsp;
             {{ comment_count }} comments have been posted.
         </div>

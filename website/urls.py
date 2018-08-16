@@ -16,8 +16,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf.urls.static import static
+from django.conf import settings
+
+from blog.views import (
+    About, Contact, SignUp, update_profile,
+    )
+
+from blog.feeds import LastEntriesFeed
 
 urlpatterns = [
-    path('', include('blog.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/signup/', SignUp.as_view(), name='signup'),
+    path('accounts/profile/', update_profile, name='profile'),
+
+    path('about/', About.as_view(), name='about'),
+    path('contact/', Contact.as_view(), name='contact'),
+    path('latest/feed/', LastEntriesFeed()),
+
+	path('comments/', include('django_comments_xtd.urls')),
+    path('', include('blog.urls')),
 ]
+
+# to load static/media files in development environment
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
