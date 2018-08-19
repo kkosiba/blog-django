@@ -1,26 +1,44 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %} Login {% endblock %}
+{% block title %} Sign In {% endblock %}
 
 {% block content %}
-
-{% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
-{% if next %}
-    {% if user.is_authenticated %}
-        <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-    {% else %}
-        <p>Please login to see this page.</p>
+<div class="card p-4 text-center" style="width: 30rem; margin: auto;">
+    <h3>Sign In </h3>
+    <hr>
+    {% if form.errors %}
+        <small class="p-1 mb-3 text-center text-white bg-danger">
+            Your username and password didn't match. Please try again.
+        </small>
     {% endif %}
-{% endif %}
 
-<form method="post" action="{% url 'login' %}" class="form-control">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="Login">Login</button>
-</form>
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+        {% endif %}
+    {% endif %}
 
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label class="col-sm-4"><b>Username:</b></label>
+            <div class="col-sm-8">
+                {{ form.username }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4"><b>Password:</b></label>
+            <div class="col-sm-8">
+                {{ form.password }}
+            </div>
+        </div>
+        <button class="btn btn-primary" type="Login">Sign In <i class="fas fa-sign-in-alt"></i></button>
+    </form>
+    <div class="text-center mt-4">
+        <a href="{% url 'password_reset' %}">Forgot your password?</a>
+        <br>
+        <a href="{% url 'signup' %}">Register new account</a>
+    </div>
+</div>
 {% endblock %}

@@ -2,10 +2,12 @@
 
 {% block title %} Sign Up {% endblock %}
 
+{% block sidebar %} {% endblock %}
+
 {% block content %}
 
 <div class="card p-4 text-center" style="width: 30rem; margin: auto;">
-    <h3>Sign Up </h3>
+    <h3>Sign Up</h3>
     <hr>
     {% if form.errors %}
         <div class="p-1 mb-3 text-center text-white bg-danger">
@@ -15,24 +17,15 @@
     
     <form method="post" action="">
         {% csrf_token %}
+        {% for field in form %}
         <div class="form-group row">
-            <label class="col-sm-4"><b>Username:</b></label>
+            <label class="col-sm-4"><b>{{ field.label_tag }}</b></label>
             <div class="col-sm-8">
-                {{ form.username }}
+                {{ field }}
             </div>
         </div>
-        <div class="form-group row">
-            <label class="col-sm-4"><b>Password:</b></label>
-            <div class="col-sm-8">
-                {{ form.password1 }}
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-4"><b>Confirm password:</b></label>
-            <div class="col-sm-8">
-                {{ form.password2 }}
-            </div>
-        </div>
+        {% endfor %}
+        
         <button class="btn btn-primary" type="Login">Sign Up</button>
     </form>
 </div>
