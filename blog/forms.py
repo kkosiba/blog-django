@@ -1,7 +1,7 @@
 from django import forms
 
 from django.forms import (
-    ModelForm, Textarea, TextInput, 
+    ModelForm, Textarea, TextInput, EmailField,
     EmailInput, SelectMultiple, CharField,
     PasswordInput, ClearableFileInput,
     )
@@ -13,7 +13,11 @@ from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import Category, Post, Profile
+
+from django.core.exceptions import ValidationError
 
 class UserForm(ModelForm):
     class Meta:
@@ -27,13 +31,14 @@ class ProfileForm(ModelForm):
         fields = ('avatar', 'bio', )
 
 
-class SignUpForm(ModelForm):
+class SignUpForm(UserCreationForm):
+    email = EmailField(label='Email',widget=EmailInput)
     password1 = CharField(label='Password', widget=PasswordInput)
     password2 = CharField(label='Confirm password', widget=PasswordInput)
 
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2', )
+        fields = ('username', 'email', 'password1', 'password2', )
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -42,13 +47,13 @@ class SignUpForm(ModelForm):
             raise ValidationError("Username already in use!")
         return username
 
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise ValidationError("Passwords don't match!")
-        return password2
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.first_name = self.cleaned_data.get('username', '').capitalize()
+        instance.email = self.cleaned_data.get('email', '')
+        if commit:
+            instance.save()
+        return instance
 
 
 class AddPostForm(ModelForm):
