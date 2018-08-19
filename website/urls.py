@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from blog.views import (
-    About, Contact, SignUp, update_profile,
+    About, Contact, SignUp, UpdateProfile,
     )
 
 from blog.feeds import LastEntriesFeed
@@ -29,7 +29,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup/', SignUp.as_view(), name='signup'),
-    path('accounts/profile/', update_profile, name='profile'),
+    path('accounts/profile/', UpdateProfile.as_view(), name='profile'),
 
     path('about/', About.as_view(), name='about'),
     path('contact/', Contact.as_view(), name='contact'),
