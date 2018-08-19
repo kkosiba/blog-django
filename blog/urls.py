@@ -1,12 +1,10 @@
 from django.urls import path
 
 from .views import (
-    PostYearArchive, PostYearMonthArchive, PostYearMonthDayArchive,
+    PostYearArchive, PostYearMonthArchive,
     ListPosts, DetailsPost, PostDraftsList, SearchPosts,
     AddPost, DeletePost, UpdatePost,
-    ListTags, ListByTag,
-    ListCategories, ListByCategory,
-    ListAuthors, ListByAuthor,
+    ListByTag, ListByCategory, ListByAuthor,
     )
 
 app_name = 'blog'
@@ -25,17 +23,9 @@ urlpatterns = [
          PostYearArchive.as_view(), name='y_archive'),
     path('<int:year>/<int:month>/',
          PostYearMonthArchive.as_view(month_format='%m'), name='ym_archive'),
-    path('<int:year>/<int:month>/<int:day>/',
-         PostYearMonthDayArchive.as_view(month_format='%m'),
-         name='ymd_archive'),
-    
-    path('tags/', ListTags.as_view(), name='tags'),
-    path('tags/<str:tag>/', ListByTag.as_view(), name='tag'),
 
-    path('category/', ListCategories.as_view(), name='all_categories'),
+    path('tag/<str:tag>/', ListByTag.as_view(), name='tag'),
     path('category/<str:name>/', ListByCategory.as_view(), name='category'),
-    
-    path('author/', ListAuthors.as_view(), name='authors'),
     path('author/<str:author>/', ListByAuthor.as_view(), name='author'),
     
     path('<slug:slug>/', DetailsPost.as_view(), name='details_post'),
