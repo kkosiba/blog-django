@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
 # Application definition
 
 INSTALLED_APPS = [
+    'blog',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django_comments_xtd',
     'django_comments',
     'taggit',
-    'blog',
+    'taggit_templatetags2',
 ]
 SITE_ID = 1
 COMMENTS_APP = 'django_comments_xtd'
@@ -53,10 +54,6 @@ COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 
 # require comment confirmation by email for no logged-in users
 COMMENTS_XTD_CONFIRM_EMAIL = False
-
-#  To help obfuscating comments before they are sent for confirmation.
-COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
-                     b"Aequam memento rebus in arduis servare mentem.")
 
 # Source mail address used for notifications.
 COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
