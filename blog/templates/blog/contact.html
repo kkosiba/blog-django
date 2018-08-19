@@ -1,25 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %} Posts {% endblock %}
+{% block title %} Contact form {% endblock %}
+
 
 {% block content %}
-
 <h3>Contact form</h3>
-
+<hr>
 <form method="post" class="form-control">
     {% csrf_token %}
     {{ form.as_p }}
     <button class="btn btn-primary" type="Submit">Submit</button>
 </form>
-
-<!-- <form class="form-horizontal" action="" method="post">
-    <input id="name" name="name" type="text" placeholder="Your name" class="form-control" required>
-    <br>
-    <input id="email" name="email" type="email" placeholder="Your email" class="form-control" required>
-    <br>
-    <textarea class="form-control" id="message" name="message" placeholder="Please enter your message here..." rows="5" required></textarea>
-    <br>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form> -->
 
 {% endblock %}

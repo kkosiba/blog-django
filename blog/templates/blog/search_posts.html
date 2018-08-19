@@ -4,26 +4,43 @@
 
 {% block content %}
 {% if request.GET.q %}
-<h2> Search results for '{{ request.GET.q }}':</h2>
-{% for post in list_posts %}
-<p>
-    <a href="{% url 'single_post' slug=post.slug %}"><h4>{{ post.title }}</h4></a>
-    <h6> by {{ post.author.username }}</h6>
-</p>
-<hr>
-{% empty %}
-<p>No posts matching search query.</p>
-{% endfor %}
+	<h3>Search results for '{{ request.GET.q }}':</h3>
+	<hr>
+	{% for post in posts %}
+	    {% if post.status != 'DRAFT' %}
+	        <div class="post">
+	            <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
+	            <div class="row justify-content-between px-3">
+	                <div>
+	                Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
+	                </div>
+
+	                <div>
+	                    <b>Categories:</b> &nbsp;
+	                    {% for category in post.category.all %}
+	                        {% if not forloop.first %}/ {% endif %}
+	                        <a href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
+	                    {% endfor %}
+	                </div>
+	            </div>
+	            <hr>
+	            <p>
+	                {{ post.content|truncatewords:10 }}<a href="{% url 'blog:details_post' slug=post.slug %}">Read more</a>
+	            </p>
+	        </div>
+	        <hr>
+	    {% endif %}
+	{% empty %}
+	    <p>No posts matching search query.</p>
+	{% endfor %}
+	<!-- PAGINATION -->
+	    {% include 'blog/pagination.html' %}
 {% else %}
-<hr>
-<h2>Search</h2>
-<form method="GET" action="{% url 'search' %}">
-    <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search posts..." name="q">
-        <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
-        </div>
-    </div>
-</form>
+	<h3>Search</h3>
+	<hr>
+	<form method="GET" action="{% url 'blog:search' %}">
+	    <input type="text" class="form-control" placeholder="Search posts..." name="q">
+	</form>
 {% endif %}
 {% endblock %}
+

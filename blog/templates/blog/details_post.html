@@ -2,77 +2,86 @@
 {% load comments %}
 {% load comments_xtd %}
 
-{% block title %} {{ post.title }} | Blog title {% endblock %}
+{% block title %} {{ post.title }} {% endblock %}
 
 
 {% block content %}
-<div class="text-left post-header">
-    <a href="{% url 'blog:details_post' slug=post.slug %}"><h2 class="post-title">{{ post.title }}</h2></a>
-    <img src="{{ post.picture.url }}" class="img-fluid" />
+<div class="post">
+    <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
+    <div class="row justify-content-between px-3">
+        <div>
+        Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
+        </div>
 
-    <!-- Social media stuff -->
-    <div class="btn-group btn-group-sm" role="group">
-        <button type="button" class="btn btn-info active"><b>Social media</b></button>
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com/home?status={{ parsed_content }}%20{{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-twitter"></i></a>
-        <a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" class="btn btn-outline-info"><i class="fab fa-google-plus-g"></i></a>
-    </div>
-</div>
-
-<div class="post-content">
-    {{ post.content|linebreaks }}
-</div>
-
-<div class="row text-left post-footer my-4">
-    <span><b>Author:</b>&nbsp; <a href="/">{{ post.author.first_name }}</a></span>
-    <div class="dropdown">
-        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-            <b>Categories</b>
-        </a>
-        <div class="dropdown-menu">
+        <div>
+            <b>Categories:</b> &nbsp;
             {% for category in post.category.all %}
-                <a class="dropdown-item" href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
+                {% if not forloop.first %}/ {% endif %}
+                <a href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
             {% endfor %}
         </div>
     </div>
-    <span><b>Posted:</b>&nbsp; {{ post.published_date|date:"F j, Y" }}</span>
-
-    <!-- Post actions for authenticated users -->
-    {% if user.is_authenticated and post.author.username == request.user.username %}
-        <div class="btn-group btn-group-sm" role="group">
-            <button type="button" class="btn btn-info active"><b>Post actions</b></button>
-            <!-- Amend post for authenticated author -->
-            <a href="{% url 'blog:update_post' slug=post.slug %}" class="btn btn-outline-warning">Update</a>
-            <!-- Delete post for authenticated author -->
-            <a href="{% url 'blog:delete_post' slug=post.slug %}" class="btn btn-outline-danger">Delete</a>
+    <hr>
+    <p>
+        {{ post.content|linebreaks }}
+    </p>
+    <hr>
+    <div class="row justify-content-between px-3">
+        <div>
+            <b>Tags:</b>&nbsp;
+            {% for tag_name in post.tags.names %}
+                {% if not forloop.first %}, {% endif %}
+                <a href="{% url 'blog:tag' tag=tag_name %}">{{ tag_name }}</a>
+            {% endfor %}
         </div>
+
+        <div>
+            <a href=""><i class="fab fa-twitter px-2"></i></a>
+            <a href=""><i class="fab fa-facebook-f px-2"></i></a>
+            <a href=""><i class="fab fa-instagram px-2"></i></a>
+            <a href=""><i class="fab fa-pinterest px-2"></i></a>
+        </div>
+        <!-- <div>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"><i class="fab fa-facebook-f"></i></a>,
+            <a href="https://twitter.com/home?status={{ parsed_content }}%20{{ request.build_absolute_uri }}"><i class="fab fa-twitter"></i></a>,
+            <a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}"><i class="fab fa-google-plus-g"></i></a>
+        </div> -->
+
+        <!-- Post actions for authenticated users -->
+        {% if user.is_authenticated and post.author.username == request.user.username %}
+            <div>
+                <b>Author actions:</b>&nbsp;
+                <!-- Amend post for authenticated author -->
+                <a href="{% url 'blog:update_post' slug=post.slug %}">Update</a>
+                |
+                <!-- Delete post for authenticated author -->
+                <a href="{% url 'blog:delete_post' slug=post.slug %}">Delete</a>
+            </div>
+        {% endif %}     
+    </div>
+    <hr>
+    {% if post.allow_comments %}
+        <div class="comment">
+            <h4 class="text-center">Your comment</h4>
+            <div class="well">
+                {% render_comment_form for post %}
+            </div>
+        </div>
+        {% get_comment_count for post as comment_count %}
+            <div class="text-center" style="padding-top:20px">
+                <a href="{% url 'blog:index' %}">Back to the post list</a>
+                &nbsp;&sdot;&nbsp;
+                {{ comment_count }} comments have been posted.
+            </div>
+        {% if comment_count %}
+            <hr/>
+            <ul class="media-list">
+                {% render_xtdcomment_tree for post %}
+            </ul>
+        {% endif %}
+    {% else %}
+        <p>Comments are disabled for this post.</p>
     {% endif %}
 </div>
-<hr>
-{% if post.allow_comments %}
-    <div class="comment">
-        <h4 class="text-center">Your comment</h4>
-        <div class="well">
-            {% render_comment_form for post %}
-        </div>
-    </div>
-    {% get_comment_count for post as comment_count %}
-        <div class="text-center" style="padding-top:20px">
-            <a href="{% url 'blog:index' %}">Back to the post list</a>
-            &nbsp;&sdot;&nbsp;
-            {{ comment_count }} comments have been posted.
-        </div>
-    {% if comment_count %}
-        <hr/>
-        <ul class="media-list">
-            {% render_xtdcomment_tree for post %}
-        </ul>
-	<div class="comments">
-            {% render_comment_list for post %}
-        </div>
-    {% endif %}
-{% else %}
-    <p>Comments are disabled for this post.</p>
-{% endif %}
 
 {% endblock %}

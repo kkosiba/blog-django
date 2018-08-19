@@ -1,0 +1,45 @@
+{% load i18n %}
+{% load comments %}
+
+{% if not user.is_authenticated %}
+<p>Sign in to post a comment</p>
+{% else %}
+<div class="card p-4 text-center" style="margin: auto;">
+    <form method="POST" action="{% comment_form_target %}" >
+        {% csrf_token %}
+        <fieldset>
+            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+
+            {% for field in form %}
+            {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+            {% endfor %}
+
+            <div style="display:none">{{ form.honeypot }}</div>
+
+            <div class="form-group {% if 'comment' in form.errors %}has-error{% endif %}">
+                {{ form.comment }}
+            </div>
+
+            {% if not request.user.is_authenticated or not request.user.get_full_name %}
+            <div class="form-group {% if 'name' in form.errors %}has-error{% endif %}">
+                {{ form.name }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <div>
+                    <div class="checkbox">
+                        <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">
+                            {{ form.followup }}&nbsp;&nbsp;{{ form.followup.label }}
+                        </label>
+                    </div>
+                    <div>
+                        <input type="submit" name="post" value="{% trans 'Send' %}" class="btn btn-primary" />
+                        <input type="submit" name="preview" value="{% trans 'Preview' %}" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endif %}

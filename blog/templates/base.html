@@ -1,115 +1,135 @@
 {% load static %}
+{% load taggit_templatetags2_tags %}
+{% load blog_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <!-- Bootstrap Stuff -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- <script src="{% static 'js/popper.min.js' %}"></script> -->
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="{% static 'css/all.css' %}">
+    <!-- Custom CSS & JS -->
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Serif+Pro" rel="stylesheet">
-    <title>{% block title %} Blog title {% endblock %}</title>
+    <!-- Google Open Sans font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <title>{% block title %} Django Blog {% endblock %}</title>
 </head>
 
 <body>
+
     <div class="container">
-        <!-- HEADER -->
-        <header>
-            <div class="text-center">
-                <a href="/">
-                    <div>
-                        <img src="{% static 'avatar.jpg' %}" alt="Blog title" id="header-avatar"/>
-                        <p class="header-title text-dark">Blog title</p>
-                    </div>
-                </a>
-                <p>
-                    <em>Some smaller text, quote or whatever...</em>
-                </p>
-                <p class="justify-content-between">
-                    <a href=""><i class="fab fa-twitter p-3"></i></a>
-                    <a href=""><i class="fab fa-facebook-f p-3"></i></a>
-                    <a href=""><i class="fab fa-instagram p-3"></i></a>
-                    <a href=""><i class="fab fa-pinterest p-3"></i></a>
-                </p>
-            </div>
-        </header>
-
-        <!-- NAV BAR -->
-        <nav class="nav justify-content-between my-2 col-md-12">
-            <a href="{% url 'blog:index' %}">Home</a>
-            <a href="{% url 'about' %}">About</a>
-            <a href="{% url 'contact' %}">Contact</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'blog:list_drafts' %}"><b>Your drafts</b></a>
-                <a href="{% url 'blog:add_post' %}"><b>Add post</b></a>
-            {% endif %}
-        </nav>
-
-        <div class="col-md-12">
-            {% block content %} {% endblock %}
-        </div>
-
-        <!-- FOOTER -->
-        <footer>
-            <div class="row text-left">
-                <div class="col-md-4">
-                    <p><b>Tags</b></p>
-                    <div>
-                        {% block tags %} {% endblock %}
-                    </div>
-                    <div class="sm">
-                        <form method="GET" action="{% url 'blog:search' %}">
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" placeholder="Search posts..." name="q">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <p>
-                        <a href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a>
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <p><b>Archives</b></p>
-                    <ul id="archives">
-                        {# for year in years #}
-                            {# for month in year.months #}
-                                {# if list_posts|year|month #}
-                                    <li><a href="">{# month|capitalize #} {# year #}</a></li>
-                                {# endif #}
-                            {# endfor #}
-                        {# endfor #}
-                        <li><a href="{% url 'blog:ym_archive' year=2018 month=8 %}">August 2018</a></li>
-                    </ul>
-                    <hr>
+        <header class="mt-4 container">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 text-left">
                     {% if user.is_authenticated %}
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-success active"><b>{{ user.get_username }}</b> <i class="fas fa-user"></i></button>
-                        <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
-                    </div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="{% url 'profile' %}" type="button" class="btn btn-success active"><b>{{ user.first_name }}</b> <i class="fas fa-user"></i></button>
+                            <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
+                        </div>
                     {% else %}
-                    <div class="btn-group btn-group-sm" role="group">
-                        <a href="{% url 'login' %}?next={{ request.path | urlencode }}" class="btn btn-primary">Login <i class="fas fa-sign-in-alt"></i></a>
-                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Register <i class="fas fa-user-plus"></i></a>
-                    </div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="{% url 'login' %}?next={{ request.path | urlencode }}" class="btn btn-secondary">Sign In <i class="fas fa-sign-in-alt"></i></a>
+                            <a href="{% url 'signup' %}" class="btn btn-outline-secondary">Sign Up <i class="fas fa-user-plus"></i></a>
+                        </div>
                     {% endif %}
                 </div>
-                <div class="col-md-4">
-                    <p><b>Lorem ipsum dolor sit amet.</b></p>
-                    <p>
-                        Sed bibendum sem in ultricies ultrices. Nullam odio metus, iaculis non lectus id, viverra placerat quam.
-                    </p>
+                <div class="col-4 text-center">
+                    <a class="h1 text-dark" href="/">Django Blog</a>
                 </div>
-            </div>
-            <div id="bottom">
-                <p>Copyright &copy; {% now "Y" %} by Author </p>
-                <p><a href="#">Back to top</a></p>
+                <div class="col-4 text-right">
+                    <a class="text-muted" href="{% url 'about' %}">About</a>&nbsp;
+                    <a class="text-muted" href="{% url 'contact' %}">Contact</a>
+                </div>
+            </div>            
+        </header>
+    <!-- <img src="{% static 'road.jpg' %}" width="100%"> -->
+
+        <div class="container nav-scroller my-4">
+            <nav class="nav d-flex justify-content-between">
+                {% if categories %}
+                    {% for category in categories %}
+                        <a href="{% url 'blog:category' name=category.name %}" class="">
+                            <h5>{{ category.name }}</h5>
+                        </a>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </nav>
+        </div>
+        
+        <!-- AUTHENTICATED USER WITH PERMISSIONS PANEL -->
+        {% if user.is_authenticated and perms.blog.add_post %}
+        <!-- it's enough to check permissions for adding posts; 
+            changing and deleting is implied
+        -->
+        <div class="container nav-scroller my-4">
+            <hr>
+            <nav class="nav d-flex justify-content-between">
+                <div class="col-2">
+                <b>Editor's Panel:</b>
+                </div>
+                <div class="col-10">
+                    <a href="{% url 'blog:add_post' %}"><b>New post</b></a> |
+                    <a href="{% url 'blog:list_drafts' %}"><b>Your drafts</b></a> |
+                    <a href="{% url 'blog:author' author=user.first_name %}"><b>Your posts</b></a>        
+                </div>
+            </nav>
+            <hr>
+        </div>
+        {% endif %}
+
+        <main class="container">
+            <!-- MAIN CONTENT -->
+            {% block content %} {% endblock %}
+        </main>
+
+
+        <!-- FOOTER -->
+        <footer class="py-3">
+            <div class="container">
+                <hr>
+                <div class="row py-4">
+                    <div class="col-md-4">
+                        <b>Most popular tags</b>
+                        <p>
+                            {% get_tagcloud as tags %}
+                            {% for tag in tags %}
+                                <a href="{% url 'blog:tag' tag=tag %}">{{ tag }} ({{tag.num_times}})</a>&nbsp;
+                            {% endfor %}
+                        </p>
+                        <hr>
+                        <p>
+                            <a href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <b>Archives</b>
+                        <ul id="archives">
+                            {% for date in dates %}
+                                <li><a href="{% url 'blog:ym_archive' year=date.year month=date.month %}">{{ date.month|month_name }} {{ date.year }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <b>About</b>
+                        <p>
+                            Vestibulum congue risus ornare, dictum nunc ut, venenatis ex. Fusce rhoncus, tellus quis mattis egestas, nunc justo luctus nibh, ultrices auctor orci orci ac ligula.
+                        </p>
+                    </div>
+                </div>
+                <p class="m-0 text-center text-dark">
+                    Copyright &copy; {% now "Y" %} by Author<br>
+                    <a href="#">Back to top</a>
+                </p>
             </div>
         </footer>
     </div>

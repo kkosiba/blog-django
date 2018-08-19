@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load comments %}
 
-{% block title %} Posts in {{ month|date:"F Y" }} {% endblock %}
+{% block title %} {% endblock %}
 
 {% block content %}
-<h3>Archived posts in {{ month|date:"F Y" }}:</h3>
+<h3>Posts in category '{{ category }}':</h3>
 <hr>
 {% for post in posts %}
     {% if post.status != 'DRAFT' %}
