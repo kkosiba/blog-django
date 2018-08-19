@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from .models import Post, Category
+from taggit.models import Tag
 
 from .forms import (
-    AddPostForm, ContactForm, SignUpForm)
+    AddPostForm, ContactForm, SignUpForm,
+    UserForm, ProfileForm, )
 
 # complex lookups (for searching)
 from django.db.models import Q
@@ -13,8 +15,10 @@ from django.urls import reverse_lazy
 
 # class based views
 from django.views.generic.edit import (
-    CreateView, DeleteView,
-    UpdateView, FormView)
+    CreateView, DeleteView, UpdateView, FormView)
+
+from django.views import View
+from django.utils.decorators import method_decorator
 
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -23,12 +27,25 @@ from django.views.generic.base import TemplateView
 from django.views.generic.dates import (
     YearArchiveView, MonthArchiveView, DayArchiveView)
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin)
 
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
-class SignUp(CreateView):
+
+class CategoryDatesMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        # get queryset of datetime objects for all published posts
+        context['dates'] = Post.objects.filter(
+            status='PUBLISHED').datetimes(field_name='published_date',
+                                          kind='month',
+                                          order='DESC')
+        return context
+
+
+class SignUp(CategoryDatesMixin, CreateView):
     template_name = 'registration/signup.html'
     form_class = SignUpForm
     success_url = reverse_lazy('login')
@@ -40,100 +57,114 @@ class SignUp(CreateView):
         return super().dispatch(*args, **kwargs)
 
 
-class ListPosts(ListView):
+class ListPosts(CategoryDatesMixin, ListView):
     model = Post
-    context_object_name = 'list_posts'
-    template_name = 'blog/list_posts.html'
-    paginate_by = 10
+    template_name = 'blog/index.html'
+    context_object_name = 'posts'
     ordering = ('-published_date',)
-
-
-class ListAuthors(ListView):
-    model = Post
-    template_name = 'blog/list_posts_author.html'
     paginate_by = 10
-    ordering = ('-published_date',)
 
 
-class ListByAuthor(ListView):
-    pass
-
-
-class ListTags(ListView):
-    pass
-
-
-class ListByTag(ListView):
+class ListByAuthor(CategoryDatesMixin, ListView):
     model = Post
     context_object_name = 'posts'
-    template_name = 'blog/list_by_tag.html'
+    template_name = 'blog/posts_by_author.html'
     paginate_by = 10
     ordering = ('-published_date',)
 
     def get_queryset(self):
-        tag = self.kwargs.get('tag_name', None)
+        author = self.kwargs.get('author', None)
+        results = []
+        if author:
+            results = Post.objects.filter(
+                author__first_name=author)
+        return results
+
+    def get_context_data(self, **kwargs):
+        """
+        Pass author's name to the context
+        """
+        context = super().get_context_data(**kwargs)
+        context['author'] = self.kwargs.get('author', None)
+        return context
+
+
+class ListByTag(CategoryDatesMixin, ListView):
+    model = Post
+    context_object_name = 'posts'
+    template_name = 'blog/posts_by_tag.html'
+    paginate_by = 10
+    ordering = ('-published_date',)
+
+    def get_queryset(self):
+        tag = self.kwargs.get('tag', None)
         results = []
         if tag:
             results = Post.objects.filter(
                 tags__name=tag)
         return results
 
-
-class ListCategories(ListView):
-    model = Category
-    template_name = 'blog/list_categories.html'
-
     def get_context_data(self, **kwargs):
+        """
+        Pass tag name to the context
+        """
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
+        context['tag'] = self.kwargs.get('tag', None)
         return context
 
-
-class ListByCategory(ListView):
-    template_name = 'blog/post_archive_category.html'
+class ListByCategory(CategoryDatesMixin, ListView):
+    model = Post
+    context_object_name = 'posts'
+    template_name = 'blog/posts_by_category.html'
+    paginate_by = 10
+    ordering = ('-published_date',)
 
     def get_queryset(self):
-        self.category = get_object_or_404(Category,
-            category=self.kwargs['category'])
-        return Post.objects.filter(category__name=self.category.name)
+        category = self.kwargs.get('name', None)
+        results = []
+        if category:
+            results = Post.objects.filter(
+                category__name=category)
+        return results
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
+        """
+        Pass category's name to the context
+        """
         context = super().get_context_data(**kwargs)
-        # Add in the category
-        context['category'] = self.category.name
+        context['category'] = self.kwargs.get('name', None)
         return context
 
 
-class DetailsPost(DetailView):
+class DetailsPost(CategoryDatesMixin, DetailView):
     model = Post
     template_name = 'blog/details_post.html'
 
 
 # Post archive views
-class PostYearArchive(YearArchiveView):
-    queryset = Post.objects.all()
+class ArchiveMixin(object):
+    model = Post
     date_field = "published_date"
+    allow_future = False
+    context_object_name = 'posts'
+
+
+class PostYearArchive(CategoryDatesMixin, ArchiveMixin, YearArchiveView):
     make_object_list = True
-    allow_future = True
 
 
-class PostYearMonthArchive(MonthArchiveView):
-    queryset = Post.objects.all()
-    date_field = "published_date"
-    allow_future = True
-
-
-class PostYearMonthDayArchive(DayArchiveView):
-    queryset = Post.objects.all()
-    date_field = "published_date"
-    allow_future = True
+class PostYearMonthArchive(CategoryDatesMixin, ArchiveMixin, MonthArchiveView):
+    pass
 
 
 # Create, delete and update post views
-class AddPost(LoginRequiredMixin, CreateView):
-    model = Post
+class AddPost(CategoryDatesMixin,
+              PermissionRequiredMixin,
+              LoginRequiredMixin,
+              CreateView):
     form_class = AddPostForm
+    permission_required = 'blog.add_post'
+    template_name = 'blog/post_form.html'
 
     # to process request.user in the form
     def form_valid(self, form):
@@ -143,17 +174,24 @@ class AddPost(LoginRequiredMixin, CreateView):
 
 
 # not yet implemented
-class PostDraftsList(LoginRequiredMixin, ListView):
+class PostDraftsList(CategoryDatesMixin,
+                     PermissionRequiredMixin,
+                     LoginRequiredMixin,
+                     ListView):
     template_name = 'blog/list_drafts.html'
+    permission_required = 'blog.add_post'
+    context_object_name = 'posts'
 
     def get_queryset(self):
-        self.category = get_object_or_404(Category,
-            category=self.kwargs['category'])
-        return Post.objects.filter(status='DRAFT',
-                                   author__email=self.request.username)
+        return Post.objects.filter(
+            status='DRAFT',
+            author__first_name=self.request.user.first_name)
 
 
-class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DeletePost(CategoryDatesMixin,
+                 LoginRequiredMixin,
+                 UserPassesTestMixin,
+                 DeleteView):
     model = Post
     success_url = reverse_lazy('blog:index')
 
@@ -164,7 +202,10 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.get_object().author.first_name == self.request.user.first_name
 
 
-class UpdatePost(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class UpdatePost(CategoryDatesMixin,
+                 LoginRequiredMixin,
+                 UserPassesTestMixin, 
+                 UpdateView):
     model = Post
     form_class = AddPostForm
 
@@ -176,9 +217,8 @@ class UpdatePost(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.get_object().author.first_name == self.request.user.first_name
 
 
-class SearchPosts(ListView):
-    model = Post
-    context_object_name = 'list_posts'
+class SearchPosts(CategoryDatesMixin, ListView):
+    context_object_name = 'posts'
     template_name = 'blog/search_posts.html'
     paginate_by = 10
     ordering = ('-published_date',)
@@ -189,17 +229,17 @@ class SearchPosts(ListView):
         if search_query:
             results = Post.objects.filter(
                 Q(category__name__icontains=search_query) |
-                Q(author__email__icontains=search_query) |
+                Q(author__first_name__icontains=search_query) |
                 Q(title__icontains=search_query) |
                 Q(content__icontains=search_query)).distinct()
         return results
 
 
-class About(TemplateView):
+class About(CategoryDatesMixin, TemplateView):
     template_name = 'blog/about.html'
 
 
-class Contact(FormView):
+class Contact(CategoryDatesMixin, FormView):
     template_name = 'blog/contact.html'
     form_class = ContactForm
     success_url = 'success/'
@@ -209,20 +249,58 @@ class Contact(FormView):
         return super().form_valid(form)
 
 
-@login_required
-@transaction.atomic
-def update_profile(request):
-    if request.method == 'POST':
+# @login_required
+# @transaction.atomic
+# def update_profile(request):
+#     if request.method == 'POST':
+#         user_form = UserForm(request.POST, instance=request.user)
+#         profile_form = ProfileForm(request.POST, instance=request.user.profile)
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user_form.save()
+#             profile_form.save()
+#             return redirect('profile')
+#     else:
+#         user_form = UserForm(instance=request.user)
+#         profile_form = ProfileForm(instance=request.user.profile)
+#     return render(request, 'profiles/profile.html', {
+#         'user_form': user_form,
+#         'profile_form': profile_form
+#     })
+
+
+class UpdateProfile(LoginRequiredMixin, View):
+    """
+    Update user and profile simult.
+    Cannot pass additional context fields through CategoryDatesMixin,
+    since View has no get_context_data() attr.
+    """
+    def get(self, request, *args, **kwargs):
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+        return render(request, 'profiles/profile.html', {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'categories': Category.objects.all(),
+            'dates': Post.objects.filter(
+            status='PUBLISHED').datetimes(field_name='published_date',
+                                          kind='month',
+                                          order='DESC')
+            })
+
+    @method_decorator(transaction.atomic)
+    def post(self, request, *args, **kwargs):
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
             return redirect('profile')
-    else:
-        user_form = UserForm(instance=request.user)
-        profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'profiles/profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form
-    })
+        return render(request, 'profiles/profile.html', {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'categories': Category.objects.all(),
+            'dates': Post.objects.filter(
+            status='PUBLISHED').datetimes(field_name='published_date',
+                                          kind='month',
+                                          order='DESC')
+            })
