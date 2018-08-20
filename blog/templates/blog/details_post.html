@@ -6,6 +6,7 @@
 
 
 {% block content %}
+{% if post.status != 'DRAFT' %}
 <div class="post">
     <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
     <div class="row justify-content-between px-3">
@@ -83,5 +84,7 @@
         <p>Comments are disabled for this post.</p>
     {% endif %}
 </div>
-
+{% else %}
+<p>No such post.</p>
+{% endif %}
 {% endblock %}

@@ -4,12 +4,26 @@
 
 
 {% block content %}
-<h3>Contact form</h3>
-<hr>
-<form method="post" class="form-control">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="Submit">Submit</button>
-</form>
+<div class="card p-4 text-center" style="width:40rem; margin: auto;">
+	<h3>Contact form</h3>
+	<hr>
+	{% if form.errors %}
+        <div class="p-1 mb-3 text-center text-white bg-danger">
+            {{ form.errors }}
+        </div>
+    {% endif %}
 
+	<form method="post">
+	    {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group row">
+            <label class="col-sm-4"><b>{{ field.label_tag }}</b></label>
+            <div class="col-sm-8">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+	    <button class="btn btn-primary" type="Submit">Submit</button>
+	</form>
+</div>
 {% endblock %}

@@ -8,34 +8,13 @@
 <hr>
 {% for post in posts %}
     <div class="post">
-        <ul class="list-inline">
-        	<li class="list-inline-item">
-        		<h2><a href="{% url 'blog:details_post' slug=post.slug %}" class="text-danger">{{ post.title }}</a> |</h2>
-        	</li>
-        	<li class="list-inline-item">
-        		<a href="{% url 'blog:update_post' slug=post.slug %}"><b>Edit</b></a>
-        	</li>
-        </ul>
+        <h2><a href="{% url 'blog:update_post' slug=post.slug %}" class="text-danger">{{ post.title }}</a></h2>
+
         <!-- <div class="row justify-content-between px-3"> -->
         	<!-- TODO: created, not published! => add new field in model -->
             <!-- <div>
             Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
             </div> -->
-
-<!--             <div>
-                <b>Categories:</b> &nbsp;
-                {% for category in post.category.all %}
-                    {% if not forloop.first %}/ {% endif %}
-                    <a href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
-                {% endfor %}
-            </div> -->
-        <!-- </div> -->
-        <hr>
-        <div class="row justify-content-between px-3">
-            <div>
-                {{ post.content|truncatewords:10 }}<a href="{% url 'blog:details_post' slug=post.slug %}">Read more</a>
-            </div>
-        </div>
     </div>
     <hr>
 {% empty %}

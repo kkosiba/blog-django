@@ -47,7 +47,8 @@
                 </div>
                 <div class="col-4 text-right">
                     <a class="text-muted" href="{% url 'about' %}">About</a>&nbsp;
-                    <a class="text-muted" href="{% url 'contact' %}">Contact</a>
+                    <a class="text-muted" href="{% url 'contact' %}">Contact</a>&nbsp;
+                    <a class="text-muted" href="/latest/feed/">Subscribe</a>
                 </div>
             </div>            
         </header>
@@ -96,30 +97,45 @@
         <!-- FOOTER -->
         <footer class="py-3">
             <div class="container">
-                <hr>
                 <div class="row py-4">
-                    <div class="col-md-4">
-                        <b>Most popular tags</b>
-                        <p>
-                            {% get_tagcloud as tags %}
-                            {% for tag in tags %}
-                                <a href="{% url 'blog:tag' tag=tag %}">{{ tag }} ({{tag.num_times}})</a>&nbsp;
-                            {% endfor %}
-                        </p>
+                    <div class="col-4">
+                        <form method="GET" action="{% url 'blog:search' %}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search..." name="q">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
                         <hr>
                         <p>
-                            <a href="/latest/feed/">RSS <i class="fas fa-rss-square"></i></a>
+                            <b>Recent posts</b>
+                            <ul class="list-unstyled">
+                                {% for post in recent_posts %}
+                                    <li>&raquo;&nbsp;<a href="{% url 'blog:details_post' slug=post.slug %}">{{ post }}</a></li>
+                                {% empty %}
+                                    <p>No posts</p>
+                                {% endfor %}
+                            </ul>
                         </p>
                     </div>
-                    <div class="col-md-4">
-                        <b>Archives</b>
+                    <div class="col-4">
+                        <i class="fas fa-archive"></i>&nbsp;<b>Archives</b>
                         <ul id="archives">
                             {% for date in dates %}
                                 <li><a href="{% url 'blog:ym_archive' year=date.year month=date.month %}">{{ date.month|month_name }} {{ date.year }}</a></li>
                             {% endfor %}
                         </ul>
+                        <hr>
+                        <i class="fas fa-tag"></i><b>Tags</b>
+                        <p>
+                            {% get_tagcloud as tags %}
+                            {% for tag in tags %}
+                                <a class="btn btn-sm btn-secondary mt-2" href="{% url 'blog:tag' tag=tag %}">{{ tag }} ({{tag.num_times}})</a>&nbsp;
+                            {% endfor %}
+                        </p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <b>About</b>
                         <p>
                             Vestibulum congue risus ornare, dictum nunc ut, venenatis ex. Fusce rhoncus, tellus quis mattis egestas, nunc justo luctus nibh, ultrices auctor orci orci ac ligula.

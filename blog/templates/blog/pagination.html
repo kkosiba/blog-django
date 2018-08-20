@@ -2,7 +2,7 @@
   <ul class="pagination justify-content-center">
     {% if post_list.has_previous %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ post_list.previous_page_number }}">&laquo;</a>
+        <a class="page-link" href="?page={{ post_list.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo;</a>
       </li>
     {% else %}
       <li class="page-item disabled">
@@ -17,13 +17,13 @@
         <!-- TODO: ADD CONSTRAINT ON VISIBLE AMOUNT OF PAGES! -->
       {% else %}
         <li class="page-item">
-          <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+          <a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
         </li>
       {% endif %}
     {% endfor %}
     {% if post_list.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ post_list.next_page_number }}">&raquo;</a>
+        <a class="page-link" href="?page={{ post_list.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&raquo;</a>
       </li>
     {% else %}
       <li class="page-item disabled">
