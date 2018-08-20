@@ -42,6 +42,9 @@ class CategoryDatesMixin(object):
             status='PUBLISHED').datetimes(field_name='published_date',
                                           kind='month',
                                           order='DESC')
+        context['recent_posts'] = Post.objects.filter(
+                                        status='PUBLISHED') \
+                                    .order_by('-published_date')[:5]
         return context
 
 
