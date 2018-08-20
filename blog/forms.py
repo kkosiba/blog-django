@@ -8,10 +8,6 @@ from django.forms import (
 
 from django.utils.text import slugify
 
-# sending mail
-from django.core.mail import send_mail, BadHeaderError
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
-
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -98,40 +94,27 @@ class AddPostForm(ModelForm):
 
 
 class ContactForm(forms.Form):
-    name = forms.CharField(required=True)
-    email = forms.EmailField(required=True)
-    subject = forms.CharField(required=True)
-    message = forms.CharField(required=True)
+    name = forms.CharField(required=True,
+        widget=TextInput(attrs={
+            'class': 'form-control',
+            'required': True,
+            }))
 
-    widgets = {
-            'name': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'required': True, }, ),
-            'email': EmailInput(
-                attrs={
-                    'class': 'form-control',
-                    'required': True, }, ),
-            'subject': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'required': True, }, ),
-            'message': Textarea(
-                attrs={
-                    'class': 'form-control',
-                    'required': True,
-                    'rows': 20 }, ),
-        }
+    email = forms.EmailField(required=True,
+        widget=EmailInput(attrs={
+            'class': 'form-control',
+            'required': True,
+            }))
 
-    def send_email(self):
-        name = self.cleaned_data['name']
-        email = self.cleaned_data['email']
-        subject = self.cleaned_data['subject']
-        message = self.cleaned_data['message']
-
-        print(self.cleaned_data)
-        try:
-            send_mail(subject, message, name,
-                ['name@domain.com', ])
-        except BadHeaderError:
-            return HttpResponse('Invalid header found.')
+    subject = forms.CharField(required=True,
+        widget=TextInput(attrs={
+            'class': 'form-control',
+            'required': True,
+            }))
+    
+    message = forms.CharField(required=True, 
+        widget=Textarea(attrs={
+            'class': 'form-control',
+            'required': True,
+            'rows': 10,
+            }))
