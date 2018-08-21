@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_comments',
     'taggit',
     'taggit_templatetags2',
+    'pagedown',
 ]
 SITE_ID = 1
 COMMENTS_APP = 'django_comments_xtd'

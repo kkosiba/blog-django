@@ -15,6 +15,9 @@ from .models import Category, Post, Profile
 
 from django.core.exceptions import ValidationError
 
+#pagedown
+from pagedown.widgets import PagedownWidget
+
 class UserForm(ModelForm):
     class Meta:
         model = User
@@ -62,11 +65,11 @@ class AddPostForm(ModelForm):
                     'class': 'form-control',
                     'required': True,
                     'placeholder': 'Type your title here..', }, ),
-            'content': Textarea(
-                attrs={
-                    'class': 'form-control',
-                    'required': True,
-                    'placeholder': 'Type your post here..', }, ),
+            'content': PagedownWidget(),
+                # attrs={
+                #     'class': 'form-control',
+                #     'required': True,
+                #     'placeholder': 'Type your post here..', }, ),
             'category': SelectMultiple(
                 attrs={
                     'class': 'form-control',
