@@ -1,0 +1,29 @@
+body {
+	background-color: #fff;
+	color: #33444C;
+	font-family: "Open Sans", sans-serif;
+}
+
+a {
+	color: #0090C8;
+	text-decoration: none;
+}
+
+a:hover {
+	opacity: .5;
+	text-decoration: none;
+}
+
+.container {
+    max-width: 90%;
+}
+
+#searchbox {
+	max-width: 200px;
+}
+
+#archives {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
