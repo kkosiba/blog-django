@@ -3,6 +3,4 @@
 __pycache__
 venv-blog-django
 db.sqlite3
-/static
-/media
 blog/migrations
