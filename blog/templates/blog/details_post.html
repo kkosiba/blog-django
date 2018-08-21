@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-{% load comments %}
-{% load comments_xtd %}
 
 {% block title %} {{ post.title }} {% endblock %}
 
@@ -61,28 +59,7 @@
         {% endif %}     
     </div>
     <hr>
-    {% if post.allow_comments %}
-        <div class="comment">
-            <h4 class="text-center">Your comment</h4>
-            <div class="well">
-                {% render_comment_form for post %}
-            </div>
-        </div>
-        {% get_comment_count for post as comment_count %}
-            <div class="text-center" style="padding-top:20px">
-                <a href="{% url 'blog:index' %}">Back to the post list</a>
-                &nbsp;&sdot;&nbsp;
-                {{ comment_count }} comments have been posted.
-            </div>
-        {% if comment_count %}
-            <hr/>
-            <ul class="media-list">
-                {% render_xtdcomment_tree for post %}
-            </ul>
-        {% endif %}
-    {% else %}
-        <p>Comments are disabled for this post.</p>
-    {% endif %}
+    <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="3" width="100%"></div>
 </div>
 {% else %}
 <p>No such post.</p>

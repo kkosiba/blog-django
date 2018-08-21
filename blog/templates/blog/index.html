@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load comments %}
 
 {% block title %} Django Blog {% endblock %}
 
@@ -28,8 +27,7 @@
                     {{ post.content|truncatewords:10 }}<a href="{% url 'blog:details_post' slug=post.slug %}">Read more</a>
                 </div>
                 <div>
-                    {% get_comment_count for post as comment_count %}
-                    <a href="{% url 'blog:details_post' slug=post.slug %}">Comments ({{ comment_count }})</a>
+                    <a href="{% url 'blog:details_post' slug=post.slug %}">Comments (<span class="fb-comments-count" data-href="{% url 'blog:details_post' slug=post.slug %}"></span>)</a>
                 </div>
             </div>
         </div>

@@ -39,28 +39,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_comments_xtd',
-    'django_comments',
+    # 'django_comments_xtd',
+    # 'django_comments',
     'taggit',
     'taggit_templatetags2',
     'pagedown',
 ]
-SITE_ID = 1
-COMMENTS_APP = 'django_comments_xtd'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# SITE_ID = 1
+# COMMENTS_APP = 'django_comments_xtd'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# comment depth & ordering
-COMMENTS_XTD_MAX_THREAD_LEVEL = 1
-COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+# # comment depth & ordering
+# COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+# COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 
-# require comment confirmation by email for no logged-in users
-COMMENTS_XTD_CONFIRM_EMAIL = False
+# # require comment confirmation by email for no logged-in users
+# COMMENTS_XTD_CONFIRM_EMAIL = False
 
-# Source mail address used for notifications.
-COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+# # Source mail address used for notifications.
+# COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
 
-# Contact mail address to show in messages.
-COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+# # Contact mail address to show in messages.
+# COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
