@@ -31,14 +31,14 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
 # Application definition
 
 INSTALLED_APPS = [
-    'blog',
     'django.contrib.admin',
+    'blog',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     # 'django_comments_xtd',
     # 'django_comments',
     'taggit',

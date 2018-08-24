@@ -35,7 +35,6 @@ urlpatterns = [
     path('contact/', Contact.as_view(), name='contact'),
     path('latest/feed/', LastEntriesFeed()),
 
-	# path('comments/', include('django_comments_xtd.urls')),
     path('', include('blog.urls')),
 ]
 
