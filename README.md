@@ -24,12 +24,4 @@ The project is all set up. Run a local server with
 
 `python manage.py runserver`
 
-You should see the warning about unapplied migrations. As instructed, stop the server and run:
-
-`python manage.py migrate`
-
-To add sample data run the command:
-
-`python manage.py loaddata sample.json`
-
 The blog should be available at `localhost:8000`.
