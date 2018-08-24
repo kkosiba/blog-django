@@ -1,6 +1,4 @@
 *.pyc
 *~
 __pycache__
-venv-blog-django
-db.sqlite3
 blog/migrations
