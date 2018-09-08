@@ -6,7 +6,7 @@
 
 {% block content %}
 {% if post.status != 'DRAFT' %}
-<div class="post">
+<div>
     <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
     <div class="row justify-content-between px-3">
         <div>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <hr>
-    <div>
+    <div class="post">
         {{ post.content|markdown }}
     </div>
     <hr>
@@ -60,7 +60,11 @@
         {% endif %}     
     </div>
     <hr>
-    <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="3" width="100%"></div>
+    {% if post.allow_comments == True %}
+        <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="3" width="100%"></div>
+    {% else %}
+        <p><b>Comments are disabled for this post.</b></p>
+    {% endif %}
 </div>
 {% else %}
 <p>No such post.</p>
