@@ -44,7 +44,7 @@ class CategoryDatesMixin(object):
                                           order='DESC')
         context['recent_posts'] = Post.objects.filter(
                                         status='PUBLISHED') \
-                                    .order_by('-published_date')[:5]
+                                    .order_by('-published_date')[:3]
         return context
 
 
