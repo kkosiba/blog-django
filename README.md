@@ -1,14 +1,18 @@
 # blog-django
 Simple Django blogging app
 
+ ![blog](https://github.com/ncunx/blog-django/blob/master/pics/main.png)
+
+For more pictures, see `pics` directory.
+
 Features
 --------
 
 1. User authorisation and registration; custom profiles.
 2. Basic user permissions: admin, editor, normal.
-⋅⋅* Normal users can view posts and comment (after logging in).
-⋅⋅* Editors have Normal users permissions but also can add posts, update/delete the existing ones for which they have suitable permissions.
-⋅⋅* admin is superuser as usual.
+	- Normal users can view posts and comment (after logging in).
+	- Editors have Normal users permissions but also can add posts, update/delete the existing ones for which they have suitable permissions.
+	- admin is superuser as usual.
 3. Facebook comments
 4. Tags
 5. Search, year/month archives, sort by post author, category, tags.
