@@ -1,4 +1,4 @@
-Django==2.0.7
+Django==2.0.8
 django-classy-tags==0.8.0
 django-pagedown==1.0.6
 django-taggit==0.23.0
