@@ -16,7 +16,7 @@ Features
 3. Facebook comments
 4. Tags
 5. Search, year/month archives, sort by post author, category, tags.
-
+6. Basic REST API provided by Django REST framework (available at `localhost:8000/api/`) 
 
 Main requirements
 ------------
