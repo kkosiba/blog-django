@@ -34,7 +34,8 @@ urlpatterns = [
     path('about/', About.as_view(), name='about'),
     path('contact/', Contact.as_view(), name='contact'),
     path('latest/feed/', LastEntriesFeed()),
-
+   
+    path('api/', include('blog.api.urls')), # REST api
     path('', include('blog.urls')),
 ]
 

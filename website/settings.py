@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # 'django.contrib.sites',
     # 'django_comments_xtd',
     # 'django_comments',
+    'rest_framework',
     'taggit',
     'taggit_templatetags2',
     'pagedown',
