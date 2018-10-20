@@ -41,12 +41,16 @@ INSTALLED_APPS = [
     # 'django.contrib.sites',
     # 'django_comments_xtd',
     # 'django_comments',
+    'crispy_forms', # crispier forms!
     'rest_framework',
     'taggit',
     'taggit_templatetags2',
     'pagedown',
     'markdown_deux',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 # SITE_ID = 1
 # COMMENTS_APP = 'django_comments_xtd'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
