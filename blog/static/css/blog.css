@@ -33,3 +33,9 @@ a:hover {
     margin-left: auto;
     margin-right: auto;
 }
+
+/* to fix markdown editor indentation */
+.wmd-panel {
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+}
