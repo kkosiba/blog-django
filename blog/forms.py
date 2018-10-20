@@ -62,18 +62,10 @@ class AddPostForm(ModelForm):
         widgets = {
             'title': TextInput(
                 attrs={
-                    'class': 'form-control',
                     'required': True,
                     'placeholder': 'Type your title here..', }, ),
             'content': PagedownWidget(),
-                # attrs={
-                #     'class': 'form-control',
-                #     'required': True,
-                #     'placeholder': 'Type your post here..', }, ),
-            'category': SelectMultiple(
-                attrs={
-                    'class': 'form-control',
-                    'required': True, }, ),
+            'category': SelectMultiple(attrs={'required': True, }, ),
         }
 
     def clean(self):
@@ -99,25 +91,21 @@ class AddPostForm(ModelForm):
 class ContactForm(forms.Form):
     name = forms.CharField(required=True,
         widget=TextInput(attrs={
-            'class': 'form-control',
             'required': True,
             }))
 
     email = forms.EmailField(required=True,
         widget=EmailInput(attrs={
-            'class': 'form-control',
             'required': True,
             }))
 
     subject = forms.CharField(required=True,
         widget=TextInput(attrs={
-            'class': 'form-control',
             'required': True,
             }))
     
     message = forms.CharField(required=True, 
         widget=Textarea(attrs={
-            'class': 'form-control',
             'required': True,
             'rows': 10,
             }))
