@@ -21,8 +21,8 @@ Features
 Main requirements
 ------------
 
-1. `python` 3.5+
-2. `Django` 2.0.7
+1. `python` 3.4, 3.5, 3.6, 3.7
+2. `Django` 2.0.9
 
 This project also uses a few external packages (see `requirements.txt` file for details). 
 For instance, processing images is done via [Pillow](https://github.com/python-pillow/Pillow) and tags via [django-taggit](https://github.com/alex/django-taggit).
