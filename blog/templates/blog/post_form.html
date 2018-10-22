@@ -1,29 +1,17 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block head_extra %} {{ form.media }} {% endblock head_extra %}
-
-
 {% block title %} Add/Update Post {% endblock %}
 
 {% block content %}
-<div class="row p-4 text-center" style="margin: auto;">
-    <div class="col-sm-6">
-        <h3>Add/Update Post</h3>
-        <hr>
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <input class="btn btn-primary" type="submit" value="Submit" />
-        </form>
-    </div>
-    <div class="col-sm-6">
-        <h3>Post Preview</h3>
-        <hr>
-        <div class="content-preview">
-            <h3 id="preview-title"></h3>
-            <p id="preview-content"></p>
-        </div>
-    </div>
+<div class="p-4 text-center" style="margin: auto;">
+    <h3>Add/Update Post</h3>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="btn btn-primary" type="submit" value="Submit" />
+    </form>
+    {{ form.media }}
 </div>
 {% endblock %}

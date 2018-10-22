@@ -42,11 +42,10 @@ INSTALLED_APPS = [
     # 'django_comments_xtd',
     # 'django_comments',
     'crispy_forms', # crispier forms!
+    'markdownx',
     'rest_framework',
     'taggit',
     'taggit_templatetags2',
-    'pagedown',
-    'markdown_deux',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

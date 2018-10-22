@@ -37,6 +37,7 @@ urlpatterns = [
    
     path('api/', include('blog.api.urls')), # REST api
     path('', include('blog.urls')),
+    path('markdownx/', include('markdownx.urls')),
 ]
 
 # to load static/media files in development environment

@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load markdown_deux_tags %}
 
 {% block title %} {{ post.title }} {% endblock %}
 
@@ -23,7 +22,7 @@
     </div>
     <hr>
     <div class="post">
-        {{ post.content|markdown }}
+        {{ post.formatted_markdown|safe }}
     </div>
     <hr>
     <div class="row justify-content-between px-3">

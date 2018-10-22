@@ -10,6 +10,9 @@ from django.urls import reverse
 # tags
 from taggit.managers import TaggableManager
 
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
+
 # Create your models here.
 
 class Profile(models.Model):
@@ -61,7 +64,7 @@ class Post(models.Model):
     slug = models.SlugField(
         max_length=300,
         unique_for_date='published_date')
-    content = models.TextField()
+    content = MarkdownxField() # markdownx
     published_date = models.DateTimeField(default=timezone.now)
     allow_comments = models.BooleanField(default=True)
     status = models.CharField(default='DRAFT', choices=STATUS, max_length=10)
@@ -77,3 +80,10 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('blog:details_post', kwargs={'slug': self.slug})
+
+    @property
+    def formatted_markdown(self):
+        """
+        To properly display markdowned content field
+        """
+        return markdownify(self.content)
