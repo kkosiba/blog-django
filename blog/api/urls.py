@@ -1,14 +1,26 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
 
 from blog.api.views import (
-    PostAPIView,
+    PostViewSet,
+    UserViewSet,
     )
 
+# Create a router and register viewsets with it.
+router = DefaultRouter()
+router.register(r'posts', PostViewSet)
+router.register(r'users', UserViewSet)
+
+# The API URLs are now determined automatically by the router.
 urlpatterns = [
-    path('', PostAPIView.as_view(), name='index'),
+    path('', include(router.urls)),
+]
+
+
+
     # path('add/', AddPost.as_view(), name='add_post'),
 
-    # # not yet implemented
     # path('add/drafts/', PostDraftsList.as_view(), name='list_drafts'),
 
     # path('search/', SearchPosts.as_view(), name='search'),
@@ -26,4 +38,3 @@ urlpatterns = [
     # path('<slug:slug>/', DetailsPost.as_view(), name='details_post'),
     # path('<slug:slug>/delete/', DeletePost.as_view(), name='delete_post'),
     # path('<slug:slug>/update/', UpdatePost.as_view(), name='update_post'),
-]
