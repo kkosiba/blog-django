@@ -13,7 +13,6 @@ urlpatterns = [
     path('', ListPosts.as_view(), name='index'),
     path('add/', AddPost.as_view(), name='add_post'),
 
-    # not yet implemented
     path('add/drafts/', PostDraftsList.as_view(), name='list_drafts'),
 
     path('search/', SearchPosts.as_view(), name='search'),
