@@ -1,35 +1,33 @@
 body {
-	background-color: #fff;
-	color: #33444C;
-	font-family: "Open Sans", sans-serif;
+    background-color: #fff;
+    color: #33444C;
+    font-family: "Open Sans", sans-serif;
 }
 
 a {
-	color: #0090C8;
-	text-decoration: none;
+    color: #0090C8;
+    text-decoration: none;
 }
 
 a:hover {
-	opacity: .5;
-	text-decoration: none;
+    opacity: .5;
+    text-decoration: none;
 }
 
-.container {
-    max-width: 90%;
+.blog-title {
+    font-family: 'Great Vibes', cursive;
 }
 
-#searchbox {
-	max-width: 200px;
+.blog-post-title {
+    font-family: 'Playfair Display', serif;
 }
 
-#archives {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+.blog-post {
+    font-family: 'Open Sans', sans-serif;
 }
 
 .post p img {
-	display: block;
+    display: block;
     margin-left: auto;
     margin-right: auto;
 }
