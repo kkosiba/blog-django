@@ -14,8 +14,9 @@
     <link rel="stylesheet" href="{% static 'css/all.css' %}">
     <!-- Custom CSS & JS -->
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-    <!-- Google Open Sans font -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Open+Sans|Playfair+Display" rel="stylesheet">
+
     <title>{% block title %} Django Blog {% endblock %}</title>
 </head>
 
@@ -30,64 +31,36 @@
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
 
-    <div class="container">
-        <header class="mt-4 container">
-            <div class="row flex-nowrap justify-content-between align-items-center">
-                <div class="col-4 text-left">
-                    {% if user.is_authenticated %}
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a href="{% url 'profile' %}" type="button" class="btn btn-success active"><b>{{ user.first_name }}</b> <i class="fas fa-user"></i></button>
-                            <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
-                        </div>
-                    {% else %}
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a href="{% url 'login' %}?next={{ request.path | urlencode }}" class="btn btn-secondary">Sign In <i class="fas fa-sign-in-alt"></i></a>
-                            <a href="{% url 'signup' %}" class="btn btn-outline-secondary">Sign Up <i class="fas fa-user-plus"></i></a>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="col-4 text-center">
-                    <a class="h1 text-dark" href="/">Django Blog</a>
-                </div>
-                <div class="col-4 text-right">
-                    <a class="text-muted" href="{% url 'about' %}">About</a>&nbsp;
-                    <a class="text-muted" href="{% url 'contact' %}">Contact</a>&nbsp;
-                    <a class="text-muted" href="/latest/feed/">Subscribe</a>
-                </div>
-            </div>            
+    <div class="container w-75">
+        <header class="container mt-4 text-center">
+            <a class="h1 text-dark blog-title" href="/">Django Blog</a>           
         </header>
-    <!-- <img src="{% static 'road.jpg' %}" width="100%"> -->
 
-        <div class="container nav-scroller my-4">
-            <nav class="nav d-flex justify-content-between">
-                {% if categories %}
-                    {% for category in categories %}
-                        <a href="{% url 'blog:category' name=category.name %}" class="">
-                            <h5>{{ category.name }}</h5>
-                        </a>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </nav>
+        {% if categories %}
+        <div class="container my-4">
+            <ul class="list-unstyled list-inline text-center h5 font-weight-bold">
+            {% for category in categories %}
+                <li class="list-inline-item">
+                    <a href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
+                </li>
+            {% endfor %}
+            </ul>
         </div>
-        
+        {% endif %}
+
         <!-- AUTHENTICATED USER WITH PERMISSIONS PANEL -->
         {% if user.is_authenticated and perms.blog.add_post %}
         <!-- it's enough to check permissions for adding posts; 
             changing and deleting is implied
         -->
-        <div class="container nav-scroller my-4">
+        <div class="container my-4">
             <hr>
-            <nav class="nav d-flex justify-content-between">
-                <div class="col-2">
-                <b>Editor's Panel:</b>
-                </div>
-                <div class="col-10">
-                    <a href="{% url 'blog:add_post' %}"><b>New post</b></a> |
-                    <a href="{% url 'blog:list_drafts' %}"><b>Your drafts</b></a> |
-                    <a href="{% url 'blog:author' author=user.first_name %}"><b>Your posts</b></a>        
-                </div>
-            </nav>
+            <ul class="list-unstyled list-inline text-center font-weight-bold">
+                <li class="list-inline-item">Editor's Panel:</li>
+                <li class="list-inline-item"><a href="{% url 'blog:add_post' %}">New post</a></li>
+                <li class="list-inline-item"><a href="{% url 'blog:list_drafts' %}">Your drafts</a></li>
+                <li class="list-inline-item"><a href="{% url 'blog:author' author=user.first_name %}">Your posts</a></li>
+            </ul>                           
             <hr>
         </div>
         {% endif %}
@@ -102,52 +75,73 @@
         <footer class="py-3">
             <div class="container">
                 <div class="row py-4">
-                    <div class="col-4">
+                    <div class="col-md-4">
                         <form method="GET" action="{% url 'blog:search' %}">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Search..." name="q">
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i></button>
+                                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
                         <hr>
                         <p>
-                            <b>Recent posts</b>
-                            <ul class="list-unstyled">
+                            <i class="fas fa-clock"></i>&nbsp;<b>Recent posts</b>
+                            <ul class="list-unstyled mt-2">
                                 {% for post in recent_posts %}
-                                    <li>&raquo;&nbsp;<a href="{% url 'blog:details_post' slug=post.slug %}">{{ post }}</a></li>
+                                    <li>
+                                        &raquo;&nbsp;<a href="{% url 'blog:details_post' slug=post.slug %}">{{ post }}</a>
+                                    </li>
                                 {% empty %}
-                                    <p>No posts</p>
+                                    <p>No posts.</p>
                                 {% endfor %}
                             </ul>
                         </p>
                     </div>
-                    <div class="col-4">
+                    <div class="col-md-4">
                         <i class="fas fa-archive"></i>&nbsp;<b>Archives</b>
-                        <ul id="archives">
+                        <ul class="list-unstyled mt-2">
                             {% for date in dates %}
-                                <li><a href="{% url 'blog:ym_archive' year=date.year month=date.month %}">{{ date.month|month_name }} {{ date.year }}</a></li>
+                                <li>
+                                    <a href="{% url 'blog:ym_archive' year=date.year month=date.month %}">{{ date.month|month_name }} {{ date.year }}</a>
+                                </li>
                             {% endfor %}
                         </ul>
                         <hr>
                         <i class="fas fa-tag"></i><b>Tags</b>
                         <p>
                             {% get_tagcloud as tags %}
+                            <ul class="list-unstyled list-inline font-weight-bold mt-2">
                             {% for tag in tags %}
-                                <a class="btn btn-sm btn-secondary mt-2" href="{% url 'blog:tag' tag=tag %}">{{ tag }} ({{tag.num_times}})</a>&nbsp;
+                                <li class="list-inline-item p-1">
+                                    <a class="btn btn-sm btn-secondary" href="{% url 'blog:tag' tag=tag %}">{{ tag }}</a>
+                                </li>
                             {% endfor %}
+                            </ul>
                         </p>
                     </div>
-                    <div class="col-4">
-                        <b>About</b>
+                    <div class="col-md-4">
+                        <i class="fas fa-info-circle"></i>&nbsp;<b>About</b>
                         <p>
                             Vestibulum congue risus ornare, dictum nunc ut, venenatis ex. Fusce rhoncus, tellus quis mattis egestas, nunc justo luctus nibh, ultrices auctor orci orci ac ligula.
                         </p>
+                        <hr>
+                        {% if user.is_authenticated %}
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'profile' %}" type="button" class="btn btn-success active"><b>{{ user.first_name }}</b> <i class="fas fa-user"></i></button>
+                                <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
+                            </div>
+                        {% else %}
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'login' %}?next={{ request.path | urlencode }}" class="btn btn-secondary">Sign In <i class="fas fa-sign-in-alt"></i></a>
+                                <a href="{% url 'signup' %}" class="btn btn-outline-secondary">Sign Up <i class="fas fa-user-plus"></i></a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <p class="m-0 text-center text-dark">
                     Copyright &copy; {% now "Y" %} by Author<br>
+                    <a href="{% url 'contact' %}">Contact</a>&nbsp;<a href="{% url 'feed' %}">Subscribe</a><br>
                     <a href="#">Back to top</a>
                 </p>
             </div>

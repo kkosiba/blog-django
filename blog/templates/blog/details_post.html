@@ -5,14 +5,16 @@
 
 {% block content %}
 {% if post.status != 'DRAFT' %}
-<div>
-    <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
-    <div class="row justify-content-between px-3">
-        <div>
-        Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
+<div class="post">
+    <p class="blog-post-title h2"><a href="{% url 'blog:details_post' slug=post.slug %}">{{ post.title }}</a></p>
+    <div class="row">
+        <div class="col-md-6">
+            <p>
+                Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
+            </p>
         </div>
 
-        <div>
+        <div class="col-md-6 text-right">
             <b>Categories:</b> &nbsp;
             {% for category in post.category.all %}
                 {% if not forloop.first %}/ {% endif %}
@@ -21,7 +23,7 @@
         </div>
     </div>
     <hr>
-    <div class="post">
+    <div class="blog-post">
         {{ post.formatted_markdown|safe }}
     </div>
     <hr>
