@@ -31,9 +31,8 @@ urlpatterns = [
     path('accounts/signup/', SignUp.as_view(), name='signup'),
     path('accounts/profile/', UpdateProfile.as_view(), name='profile'),
 
-    path('about/', About.as_view(), name='about'),
     path('contact/', Contact.as_view(), name='contact'),
-    path('latest/feed/', LastEntriesFeed()),
+    path('latest/feed/', LastEntriesFeed(), name='feed'),
    
     path('api/', include('blog.api.urls')), # REST api
     path('', include('blog.urls')),

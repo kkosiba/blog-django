@@ -176,7 +176,6 @@ class AddPost(CategoryDatesMixin,
         return super().form_valid(form)
 
 
-# not yet implemented
 class PostDraftsList(CategoryDatesMixin,
                      PermissionRequiredMixin,
                      LoginRequiredMixin,
