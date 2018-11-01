@@ -237,10 +237,6 @@ class SearchPosts(CategoryDatesMixin, ListView):
         return results
 
 
-class About(CategoryDatesMixin, TemplateView):
-    template_name = 'blog/about.html'
-
-
 class Contact(CategoryDatesMixin, FormView):
     template_name = 'blog/contact.html'
     form_class = ContactForm
@@ -249,25 +245,6 @@ class Contact(CategoryDatesMixin, FormView):
     def form_valid(self, form):
         form.send_email()
         return super().form_valid(form)
-
-
-# @login_required
-# @transaction.atomic
-# def update_profile(request):
-#     if request.method == 'POST':
-#         user_form = UserForm(request.POST, instance=request.user)
-#         profile_form = ProfileForm(request.POST, instance=request.user.profile)
-#         if user_form.is_valid() and profile_form.is_valid():
-#             user_form.save()
-#             profile_form.save()
-#             return redirect('profile')
-#     else:
-#         user_form = UserForm(instance=request.user)
-#         profile_form = ProfileForm(instance=request.user.profile)
-#     return render(request, 'profiles/profile.html', {
-#         'user_form': user_form,
-#         'profile_form': profile_form
-#     })
 
 
 class UpdateProfile(LoginRequiredMixin, View):
