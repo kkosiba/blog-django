@@ -3,14 +3,28 @@ from .permissions import IsOwnerOrReadOnly
 
 from blog.models import Post
 from django.contrib.auth.models import User
-from .serializers import PostSerializer, UserSerializer
+from .serializers import (
+    PostSerializer,
+    UserSerializer,
+    )
 
-from rest_framework import viewsets
+from .pagination import (
+    PostPageNumberPagination,
+    UserPageNumberPagination,
+    )
+
+from rest_framework.viewsets import (
+    ModelViewSet,
+    ReadOnlyModelViewSet,
+    )
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter,
+    )
 
 from django.shortcuts import get_object_or_404
 
@@ -32,7 +46,7 @@ from django.shortcuts import get_object_or_404
 #         return obj
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
@@ -41,16 +55,26 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly, )
+    lookup_field = 'slug'
+
+    filter_backends = [SearchFilter, OrderingFilter, ]
+    search_fields = ['category__name',
+                     'author__first_name',
+                     'title',
+                     'content', ]
+
+    pagination_class = PostPageNumberPagination
+
+    # doesn't save to the database...
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
-    # doesn't work yet...
-    # def perform_create(self, serializer):
-    #     serializer.save(author__first_name=self.request.user.first_name)
-
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    
+    filter_backends = [SearchFilter, OrderingFilter, ]
+    search_fields = ['first_name']
 
-
-
+    pagination_class = UserPageNumberPagination
