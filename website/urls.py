@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from blog.views import (
-    About, Contact, SignUp, UpdateProfile,
+    Contact, SignUp, UpdateProfile,
     )
 
 from blog.feeds import LastEntriesFeed
