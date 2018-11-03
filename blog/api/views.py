@@ -65,7 +65,6 @@ class PostViewSet(ModelViewSet):
 
     pagination_class = PostPageNumberPagination
 
-    # doesn't save to the database...
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
