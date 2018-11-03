@@ -70,7 +70,7 @@ class Post(models.Model):
     status = models.CharField(default='DRAFT', choices=STATUS, max_length=10)
 
     # tags mechanism
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     class Meta:
         ordering = ('-published_date', )
