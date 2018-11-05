@@ -65,7 +65,7 @@ class Post(models.Model):
         max_length=300,
         unique_for_date='published_date')
     content = MarkdownxField() # markdownx
-    published_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(auto_now=True)
     allow_comments = models.BooleanField(default=True)
     status = models.CharField(default='DRAFT', choices=STATUS, max_length=10)
 
