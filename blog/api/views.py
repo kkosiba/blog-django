@@ -4,7 +4,8 @@ from .permissions import IsOwnerOrReadOnly
 from blog.models import Post
 from django.contrib.auth.models import User
 from .serializers import (
-    PostSerializer,
+    PostListSerializer,
+    PostDetailSerializer,
     UserSerializer,
     )
 
@@ -52,7 +53,6 @@ class PostViewSet(ModelViewSet):
     `update` and `destroy` actions.
     """
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly, )
     lookup_field = 'slug'
@@ -63,7 +63,13 @@ class PostViewSet(ModelViewSet):
                      'title',
                      'content', ]
 
-    pagination_class = PostPageNumberPagination
+    # pagination_class = PostPageNumberPagination # works fine
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return PostDetailSerializer
+        else:
+            return PostListSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

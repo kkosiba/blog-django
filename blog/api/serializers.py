@@ -9,6 +9,8 @@ from rest_framework.serializers import (
 from blog.models import Post, Category
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.utils import timezone
+import datetime
 
 
 # model listings
@@ -45,7 +47,25 @@ class CategorySerializer(ModelSerializer):
         fields = ('name', )
 
 
-class PostSerializer(ModelSerializer):
+class PostListSerializer(ModelSerializer):
+    url = HyperlinkedIdentityField(
+        view_name='post-detail',
+        lookup_field='slug',
+        )
+    author = AuthorListingField(queryset=User.objects.all())
+    published_date = DateTimeField(format='%a, %d %b  %I:%M %p')
+
+    class Meta:
+        model = Post
+        fields = (
+            'url',
+            'title',
+            'published_date',
+            'author',
+            )
+
+
+class PostDetailSerializer(ModelSerializer):
     url = HyperlinkedIdentityField(
         view_name='post-detail',
         lookup_field='slug',
@@ -77,9 +97,3 @@ class PostSerializer(ModelSerializer):
         for category in categories:
             post.category.add(category)
         return post
-
-    # def update(self, instance, validated_data):
-    #     instance.content = validated_data.get('content', instance.content)
-    #     instance.published_date = validated_data.get('published_date', instance.published_date)
-    #     instance.save()
-    #     return instance
