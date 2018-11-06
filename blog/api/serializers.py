@@ -3,14 +3,15 @@ from rest_framework.serializers import (
     HyperlinkedIdentityField,
     RelatedField,
     DateTimeField,
+    HiddenField,
     ValidationError,
     )
 
 from blog.models import Post, Category
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-from django.utils import timezone
-import datetime
+
+from rest_framework.fields import CurrentUserDefault
 
 
 # model listings
@@ -86,6 +87,29 @@ class PostDetailSerializer(ModelSerializer):
             'status',
             )
 
+
+class PostCreateUpdateSerializer(ModelSerializer):
+    url = HyperlinkedIdentityField(
+        view_name='post-detail',
+        lookup_field='slug',
+        )
+    # author = AuthorListingField(queryset=User.objects.all())
+    author = HiddenField(default=CurrentUserDefault())
+    category = CategoryListingField(queryset=Category.objects.all(), many=True)
+    published_date = DateTimeField(format='%a, %d %b  %I:%M %p', read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            'url',
+            'title',
+            'category',
+            'content',
+            'published_date',
+            'author',
+            'status',
+            )
+
     def create(self, validated_data):
         title = validated_data.get('title', '')
         validated_data['slug'] = slugify(title)
@@ -97,3 +121,18 @@ class PostDetailSerializer(ModelSerializer):
         for category in categories:
             post.category.add(category)
         return post
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.slug = slugify(instance.title)
+        
+        categories = validated_data.get('category')
+        # deassociate existing categories from instance
+        instance.category.clear()
+        for category in categories:
+            instance.category.add(category)
+
+        instance.author = self.context.get('request').user
+        instance.content = validated_data.get('content', instance.content)
+        instance.save()
+        return instance
