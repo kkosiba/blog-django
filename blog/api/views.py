@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .serializers import (
     PostListSerializer,
     PostDetailSerializer,
+    PostCreateUpdateSerializer,
     UserSerializer,
     )
 
@@ -68,10 +69,15 @@ class PostViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return PostDetailSerializer
+        elif self.action == 'create' or self.action == 'update':
+            return PostCreateUpdateSerializer
         else:
             return PostListSerializer
 
     def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(author=self.request.user)
 
 
