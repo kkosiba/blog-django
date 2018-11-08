@@ -41,14 +41,11 @@ INSTALLED_APPS = [
     # 'django.contrib.sites',
     # 'django_comments_xtd',
     # 'django_comments',
-    'crispy_forms', # crispier forms!
     'markdownx',
     'rest_framework',
     'taggit',
     'taggit_templatetags2',
 ]
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # SITE_ID = 1
 # COMMENTS_APP = 'django_comments_xtd'
