@@ -3,7 +3,7 @@ Simple Django blogging app
 
  ![blog](https://github.com/ncunx/blog-django/blob/master/pics/main.png)
 
-For more pictures, see `pics` directory.
+For more pictures, see `pics` directory. See also `https://ncunx.pythonanywhere.com/` for the deployed version.
 
 Features
 --------
