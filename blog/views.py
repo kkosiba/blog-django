@@ -5,7 +5,7 @@ from .models import Post, Category
 from taggit.models import Tag
 
 from .forms import (
-    AddPostForm, ContactForm, SignUpForm,
+    AddPostForm, SignUpForm,
     UserForm, ProfileForm, )
 
 # complex lookups (for searching)
@@ -235,16 +235,6 @@ class SearchPosts(CategoryDatesMixin, ListView):
                 Q(title__icontains=search_query) |
                 Q(content__icontains=search_query)).distinct()
         return results
-
-
-class Contact(CategoryDatesMixin, FormView):
-    template_name = 'blog/contact.html'
-    form_class = ContactForm
-    success_url = 'success/'
-
-    def form_valid(self, form):
-        form.send_email()
-        return super().form_valid(form)
 
 
 class UpdateProfile(LoginRequiredMixin, View):

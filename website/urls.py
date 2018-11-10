@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from blog.views import (
-    Contact, SignUp, UpdateProfile,
+    SignUp, UpdateProfile,
     )
 
 from blog.feeds import LastEntriesFeed
@@ -31,7 +31,8 @@ urlpatterns = [
     path('accounts/signup/', SignUp.as_view(), name='signup'),
     path('accounts/profile/', UpdateProfile.as_view(), name='profile'),
 
-    path('contact/', Contact.as_view(), name='contact'),
+    # path('contact/', Contact.as_view(), name='contact'),
+    path('contact/', include('contact.urls', namespace='contact')),
     path('latest/feed/', LastEntriesFeed(), name='feed'),
    
     path('api/', include('blog.api.urls')), # REST api

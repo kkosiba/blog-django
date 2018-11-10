@@ -29,9 +29,26 @@ class ProfileForm(ModelForm):
 
 
 class SignUpForm(UserCreationForm):
-    email = EmailField(label='Email',widget=EmailInput)
-    password1 = CharField(label='Password', widget=PasswordInput)
-    password2 = CharField(label='Confirm password', widget=PasswordInput)
+    username = CharField(label='Username',
+        widget=TextInput(
+            attrs={'class': 'form-control',
+                   'required': True,
+                   }))
+    email = EmailField(label='Email',
+        widget=EmailInput(
+            attrs={'class': 'form-control',
+                   'required': True,
+                   }))
+    password1 = CharField(label='Password',
+        widget=PasswordInput(
+            attrs={'class': 'form-control',
+                   'required': True,
+                   }))
+    password2 = CharField(label='Confirm password',
+        widget=PasswordInput(
+            attrs={'class': 'form-control',
+                   'required': True,
+                   }))
 
     class Meta:
         model = User
@@ -83,26 +100,3 @@ class AddPostForm(ModelForm):
             instance.save()
             self.save_m2m()
         return instance
-
-
-class ContactForm(forms.Form):
-    name = forms.CharField(required=True,
-        widget=TextInput(attrs={
-            'required': True,
-            }))
-
-    email = forms.EmailField(required=True,
-        widget=EmailInput(attrs={
-            'required': True,
-            }))
-
-    subject = forms.CharField(required=True,
-        widget=TextInput(attrs={
-            'required': True,
-            }))
-    
-    message = forms.CharField(required=True, 
-        widget=Textarea(attrs={
-            'required': True,
-            'rows': 10,
-            }))

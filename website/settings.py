@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'blog',
+    'contact',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -47,22 +48,12 @@ INSTALLED_APPS = [
     'taggit_templatetags2',
 ]
 
-# SITE_ID = 1
-# COMMENTS_APP = 'django_comments_xtd'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# # comment depth & ordering
-# COMMENTS_XTD_MAX_THREAD_LEVEL = 1
-# COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
-
-# # require comment confirmation by email for no logged-in users
-# COMMENTS_XTD_CONFIRM_EMAIL = False
-
-# # Source mail address used for notifications.
-# COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
-
-# # Contact mail address to show in messages.
-# COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'admin@localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+EMAIL_PORT = 1025
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
