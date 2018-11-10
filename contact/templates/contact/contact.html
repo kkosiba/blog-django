@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %} Contact form {% endblock %}
+
+
+{% block content %}
+
+<div class="p-4 text-center m-auto w-75">
+    <h3>Contact form</h3>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+   
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="font-weight-bold">{{ form.name.label_tag }}</label>
+                    {{ form.name }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="font-weight-bold">{{ form.reply_to.label_tag }}</label>
+                    {{ form.reply_to }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="font-weight-bold">{{ form.message.label_tag }}</label>
+            {{ form.message }}
+        </div>
+        <input class="btn btn-primary" type="submit" value="Send" />
+    </form>
+</div>
+{% endblock %}
+
+<!-- Clear footer -->
+{% block footer-content %} {% endblock %} 
