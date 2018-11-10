@@ -36,6 +36,7 @@
             <a class="h1 text-dark blog-title" href="/">Django Blog</a>           
         </header>
 
+        {% block nav-content %}
         {% if categories %}
         <div class="container my-4">
             <ul class="list-unstyled list-inline text-center h5 font-weight-bold">
@@ -47,7 +48,9 @@
             </ul>
         </div>
         {% endif %}
+        {% endblock %}
 
+        {% block editor-panel %}
         <!-- AUTHENTICATED USER WITH PERMISSIONS PANEL -->
         {% if user.is_authenticated and perms.blog.add_post %}
         <!-- it's enough to check permissions for adding posts; 
@@ -64,6 +67,7 @@
             <hr>
         </div>
         {% endif %}
+        {% endblock %}
 
         <main class="container">
             <!-- MAIN CONTENT -->
@@ -74,6 +78,7 @@
         <!-- FOOTER -->
         <footer class="py-3">
             <div class="container">
+                {% block footer-content %}
                 <div class="row py-4">
                     <div class="col-md-4">
                         <form method="GET" action="{% url 'blog:search' %}">
@@ -139,9 +144,10 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endblock %}
                 <p class="m-0 text-center text-dark">
                     Copyright &copy; {% now "Y" %} by Author<br>
-                    <a href="{% url 'contact' %}">Contact</a>&nbsp;<a href="{% url 'feed' %}">Subscribe</a><br>
+                    <a href="{% url 'contact:email-form' %}">Contact</a>&nbsp;<a href="{% url 'feed' %}">Subscribe</a><br>
                     <a href="#">Back to top</a>
                 </p>
             </div>
