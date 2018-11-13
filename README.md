@@ -8,7 +8,7 @@ For more pictures, see `pics` directory. See also `https://ncunx.pythonanywhere.
 Features
 --------
 
-1. User authorisation and registration; custom profiles.
+1. User authorisation and registration
 2. Basic user permissions: admin, editor, normal.
 
 	[//]: # "- Normal users can view posts and comment (after logging in)."
@@ -27,7 +27,7 @@ Main requirements
 2. `Django` 2.1.3
 
 This project also uses a few external packages (see `requirements.txt` file for details). 
-For instance, processing images is done via [Pillow](https://github.com/python-pillow/Pillow) and tags via [django-taggit](https://github.com/alex/django-taggit).
+For instance, tags support is provided by [django-taggit](https://github.com/alex/django-taggit).
 
 
 Usage
@@ -54,3 +54,5 @@ The project is all set up. Run a local server with
 `python3 manage.py runserver`
 
 The blog should be available at `localhost:8000`.
+
+5. For testing purposes several accounts are created. Credentials: `(admin, passwordadmin), (userN, passworduserN)`, where `N=1,2,3,4`.
