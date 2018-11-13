@@ -36,9 +36,9 @@
         <button class="btn btn-primary" type="Login">Sign In <i class="fas fa-sign-in-alt"></i></button>
     </form>
     <div class="text-center mt-4">
-        <a href="{% url 'password_reset' %}">Forgot your password?</a>
+        <a href="{% url 'accounts:password_reset' %}">Forgot your password?</a>
         <br>
-        <a href="{% url 'signup' %}">Register new account</a>
+        <a href="{% url 'accounts:signup' %}">Register new account</a>
     </div>
 </div>
 {% endblock %}
