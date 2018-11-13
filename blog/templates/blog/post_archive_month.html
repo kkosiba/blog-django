@@ -3,33 +3,10 @@
 {% block title %} Posts in {{ month|date:"F Y" }} {% endblock %}
 
 {% block content %}
-<h3>Archived posts in {{ month|date:"F Y" }}:</h3>
-<hr>
-{% for post in posts %}
-    {% if post.status != 'DRAFT' %}
-        <div class="post">
-            <p><a href="{% url 'blog:details_post' slug=post.slug %}"><h2>{{ post.title }}</h2></a></p>
-            <div class="row justify-content-between">
-                <div class="col-6">
-                Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
-                |
-                <a href="{% url 'blog:details_post' slug=post.slug %}">Comments (<span class="fb-comments-count" data-href="{{ request.build_absolute_uri }}/{{ post.slug }}/"></span>)</a>
-                </div>
-
-                <div class="col-6 text-right">
-                    <b>Categories:</b> &nbsp;
-                    {% for category in post.category.all %}
-                        {% if not forloop.first %}/ {% endif %}
-                        <a href="{% url 'blog:category' name=category.name %}">{{ category.name }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <hr>
-    {% endif %}
-{% empty %}
-    <p>No posts.</p>
-{% endfor %}
-<!-- PAGINATION -->
+    <h3>Posts from {{ month|date:"F Y" }}:</h3>
+    <hr>
+    <!-- Generic post listing template -->
+    {% include 'blog/post_list_generic.html' %}
+    <!-- PAGINATION -->
     {% include 'blog/pagination.html' %}
 {% endblock %}
