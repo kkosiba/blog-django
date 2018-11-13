@@ -15,24 +15,24 @@ from markdownx.utils import markdownify
 
 # Create your models here.
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, 
-        default=None, null=True, related_name='profile')
-    avatar = models.ImageField(
-        upload_to='media/avatars',
-        default='media/avatars/none.jpg',
-        blank=True, )
-    bio = models.TextField(max_length=500, default='', blank=True)
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, 
+#         default=None, null=True, related_name='profile')
+#     avatar = models.ImageField(
+#         upload_to='media/avatars',
+#         default='media/avatars/none.jpg',
+#         blank=True, )
+#     bio = models.TextField(max_length=500, default='', blank=True)
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         Profile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.profile.save()
 
 
 class Category(models.Model):
@@ -59,7 +59,7 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='posts')
-    picture = models.ImageField(upload_to='media', default='media/None/no-img.jpg')
+    # picture = models.ImageField(upload_to='media', default='media/None/no-img.jpg')
     title = models.CharField(max_length=300)
     slug = models.SlugField(
         max_length=300,
