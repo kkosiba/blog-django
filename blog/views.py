@@ -4,9 +4,7 @@ from django.utils import timezone
 from .models import Post, Category
 from taggit.models import Tag
 
-from .forms import (
-    AddPostForm, SignUpForm,
-    UserForm, ProfileForm, )
+from .forms import AddPostForm
 
 # complex lookups (for searching)
 from django.db.models import Q
@@ -48,31 +46,19 @@ class CategoryDatesMixin(object):
         return context
 
 
-class SignUp(CategoryDatesMixin, CreateView):
-    template_name = 'registration/signup.html'
-    form_class = SignUpForm
-    success_url = reverse_lazy('login')
-
-    # prevents signed in user to sign up
-    def dispatch(self, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return redirect('/')
-        return super().dispatch(*args, **kwargs)
-
-
 class ListPosts(CategoryDatesMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'posts'
     ordering = ('-published_date',)
-    paginate_by = 10
+    paginate_by = 2
 
 
 class ListByAuthor(CategoryDatesMixin, ListView):
     model = Post
     context_object_name = 'posts'
-    template_name = 'blog/posts_by_author.html'
-    paginate_by = 10
+    template_name = 'blog/post_by_author.html'
+    paginate_by = 2
     ordering = ('-published_date',)
 
     def get_queryset(self):
@@ -80,7 +66,7 @@ class ListByAuthor(CategoryDatesMixin, ListView):
         results = []
         if author:
             results = Post.objects.filter(
-                author__first_name=author)
+                author__username=author)
         return results
 
     def get_context_data(self, **kwargs):
@@ -95,8 +81,8 @@ class ListByAuthor(CategoryDatesMixin, ListView):
 class ListByTag(CategoryDatesMixin, ListView):
     model = Post
     context_object_name = 'posts'
-    template_name = 'blog/posts_by_tag.html'
-    paginate_by = 10
+    template_name = 'blog/post_by_tag.html'
+    paginate_by = 2
     ordering = ('-published_date',)
 
     def get_queryset(self):
@@ -115,11 +101,12 @@ class ListByTag(CategoryDatesMixin, ListView):
         context['tag'] = self.kwargs.get('tag', None)
         return context
 
+
 class ListByCategory(CategoryDatesMixin, ListView):
     model = Post
     context_object_name = 'posts'
-    template_name = 'blog/posts_by_category.html'
-    paginate_by = 10
+    template_name = 'blog/post_by_category.html'
+    paginate_by = 2
     ordering = ('-published_date',)
 
     def get_queryset(self):
@@ -141,7 +128,7 @@ class ListByCategory(CategoryDatesMixin, ListView):
 
 class DetailsPost(CategoryDatesMixin, DetailView):
     model = Post
-    template_name = 'blog/details_post.html'
+    template_name = 'blog/post_detail.html'
 
 
 # Post archive views
@@ -175,6 +162,14 @@ class AddPost(CategoryDatesMixin,
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        """
+        To use AddPostForm with 'Update' instead of 'Add' text in update view
+        """
+        context = super().get_context_data(**kwargs)
+        context['update'] = False
+        return context
+
 
 class PostDraftsList(CategoryDatesMixin,
                      PermissionRequiredMixin,
@@ -187,7 +182,7 @@ class PostDraftsList(CategoryDatesMixin,
     def get_queryset(self):
         return Post.objects.filter(
             status='DRAFT',
-            author__first_name=self.request.user.first_name)
+            author__username=self.request.user.username)
 
 
 class DeletePost(CategoryDatesMixin,
@@ -201,7 +196,7 @@ class DeletePost(CategoryDatesMixin,
         """
         Only let the user delete object if they own the object being deleted
         """
-        return self.get_object().author.first_name == self.request.user.first_name
+        return self.get_object().author.username == self.request.user.username
 
 
 class UpdatePost(CategoryDatesMixin,
@@ -216,13 +211,21 @@ class UpdatePost(CategoryDatesMixin,
         Only let the user update object if they own the object being updated
 
         """
-        return self.get_object().author.first_name == self.request.user.first_name
+        return self.get_object().author.username == self.request.user.username
+
+    def get_context_data(self, **kwargs):
+        """
+        To use AddPostForm with 'Update' instead of 'Add' text in update view
+        """
+        context = super().get_context_data(**kwargs)
+        context['update'] = True
+        return context
 
 
 class SearchPosts(CategoryDatesMixin, ListView):
     context_object_name = 'posts'
-    template_name = 'blog/search_posts.html'
-    paginate_by = 10
+    template_name = 'blog/post_search.html'
+    paginate_by = 2
     ordering = ('-published_date',)
 
     def get_queryset(self):
@@ -231,45 +234,7 @@ class SearchPosts(CategoryDatesMixin, ListView):
         if search_query:
             results = Post.objects.filter(
                 Q(category__name__icontains=search_query) |
-                Q(author__first_name__icontains=search_query) |
+                Q(author__username__icontains=search_query) |
                 Q(title__icontains=search_query) |
                 Q(content__icontains=search_query)).distinct()
         return results
-
-
-class UpdateProfile(LoginRequiredMixin, View):
-    """
-    Update user and profile simult.
-    Cannot pass additional context fields through CategoryDatesMixin,
-    since View has no get_context_data() attr.
-    """
-    def get(self, request, *args, **kwargs):
-        user_form = UserForm(instance=request.user)
-        profile_form = ProfileForm(instance=request.user.profile)
-        return render(request, 'profiles/profile.html', {
-            'user_form': user_form,
-            'profile_form': profile_form,
-            'categories': Category.objects.all(),
-            'dates': Post.objects.filter(
-            status='PUBLISHED').datetimes(field_name='published_date',
-                                          kind='month',
-                                          order='DESC')
-            })
-
-    @method_decorator(transaction.atomic)
-    def post(self, request, *args, **kwargs):
-        user_form = UserForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect('profile')
-        return render(request, 'profiles/profile.html', {
-            'user_form': user_form,
-            'profile_form': profile_form,
-            'categories': Category.objects.all(),
-            'dates': Post.objects.filter(
-            status='PUBLISHED').datetimes(field_name='published_date',
-                                          kind='month',
-                                          order='DESC')
-            })
