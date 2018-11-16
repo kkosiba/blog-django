@@ -19,19 +19,12 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from blog.views import (
-    SignUp, UpdateProfile,
-    )
-
 from blog.feeds import LastEntriesFeed
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/signup/', SignUp.as_view(), name='signup'),
-    path('accounts/profile/', UpdateProfile.as_view(), name='profile'),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
 
-    # path('contact/', Contact.as_view(), name='contact'),
     path('contact/', include('contact.urls', namespace='contact')),
     path('latest/feed/', LastEntriesFeed(), name='feed'),
    
