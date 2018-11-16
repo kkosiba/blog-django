@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-6">
             <p>
-                Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
+                Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.username %}">{{ post.author.username.capitalize }}</a></b>
             </p>
         </div>
 

@@ -3,24 +3,17 @@
 {% block title %} Your drafts {% endblock %}
 
 {% block content %}
-
-<h3>Your drafts:</h3>
-<hr>
-{% for post in posts %}
-    <div class="post">
-        <h2><a href="{% url 'blog:update_post' slug=post.slug %}" class="text-danger">{{ post.title }}</a></h2>
-
-        <!-- <div class="row justify-content-between px-3"> -->
-        	<!-- TODO: created, not published! => add new field in model -->
-            <!-- <div>
-            Posted on &nbsp;<b>{{ post.published_date|date:"F j, Y" }}</b>&nbsp; by &nbsp;<b><a href="{% url 'blog:author' author=post.author.first_name %}">{{ post.author.first_name }}</a></b>
-            </div> -->
-    </div>
+    <h3>Your drafts:</h3>
     <hr>
-{% empty %}
-    <p>No posts.</p>
-{% endfor %}
-<!-- PAGINATION -->
+    {% for post in posts %}
+        <div class="post">
+            <h2><a href="{% url 'blog:update_post' slug=post.slug %}" class="text-danger">{{ post.title }}</a></h2>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No posts.</p>
+    {% endfor %}
+    <!-- PAGINATION -->
     {% include 'blog/pagination.html' %}
 {% endblock %}
 
