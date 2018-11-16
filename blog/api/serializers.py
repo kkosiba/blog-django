@@ -29,7 +29,7 @@ class CategoryListingField(RelatedField):
 
 class AuthorListingField(RelatedField):
     def to_representation(self, value):
-        return f'{value.first_name}'
+        return f'{value.username.capitalize()}'
 
     def to_internal_value(self, value):
         return value
@@ -39,7 +39,7 @@ class AuthorListingField(RelatedField):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', )
+        fields = ('username', )
 
 
 class CategorySerializer(ModelSerializer):

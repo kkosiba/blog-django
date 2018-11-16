@@ -60,7 +60,7 @@ class PostViewSet(ModelViewSet):
 
     filter_backends = [SearchFilter, OrderingFilter, ]
     search_fields = ['category__name',
-                     'author__first_name',
+                     'author__username',
                      'title',
                      'content', ]
 
@@ -86,6 +86,6 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     
     filter_backends = [SearchFilter, OrderingFilter, ]
-    search_fields = ['first_name']
+    search_fields = ['username']
 
     pagination_class = UserPageNumberPagination
