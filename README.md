@@ -18,15 +18,16 @@ Features
 3. Facebook comments
 4. Tags
 5. Search, year/month archives, sort by post author, category, tags.
-6. Basic REST API provided by Django REST framework (available at `localhost:8000/api/`) 
+6. Basic REST API provided by Django REST framework (available at `localhost:8000/api/`)
 
 Main requirements
 ------------
 
 1. `python` 3.5, 3.6, 3.7
-2. `Django` 2.1.3
+2. `Django` 2.1.8
+3. `PostreSQL` 11.1 (see below)
 
-This project also uses a few external packages (see `requirements.txt` file for details). 
+This project also uses a few external packages (see `requirements.txt` file for details).
 For instance, tags support is provided by [django-taggit](https://github.com/alex/django-taggit).
 
 
@@ -43,7 +44,7 @@ Usage
 
 3. Set up a virtual environment and activate it:
 
-`python3 -m venv <preferred_name> && source <preferred_name>/bin/activate`
+`python3 -m venv env && source env/bin/activate`
 
 4. Install required packages:
 
@@ -56,3 +57,4 @@ The project is all set up. Run a local server with
 The blog should be available at `localhost:8000`.
 
 5. For testing purposes several accounts are created. Credentials: `(admin, passwordadmin), (userN, passworduserN)`, where `N=1,2,3,4`.
+
