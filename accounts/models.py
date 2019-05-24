@@ -7,8 +7,8 @@ from django.dispatch import receiver
 # Create your models here.
 
 # class Profile(models.Model):
-#     user = models.OneToOneField(User, 
-#     	on_delete=models.CASCADE, 
+#     user = models.OneToOneField(User,
+#     	on_delete=models.CASCADE,
 #         default=User,
 #         null=True,
 #         related_name='profile', )

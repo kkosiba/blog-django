@@ -6,22 +6,22 @@ from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-from .forms import (
-	SignUpForm, UserForm, )
+from .forms import SignUpForm, UserForm
 
 from django.urls import reverse_lazy
 
 # Create your views here.
 
+
 class SignUp(CreateView):
-    template_name = 'registration/signup.html'
+    template_name = "registration/signup.html"
     form_class = SignUpForm
-    success_url = reverse_lazy('accounts:login')
+    success_url = reverse_lazy("accounts:login")
 
     # prevents signed in user to sign up
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('/')
+            return redirect("/")
         return super().dispatch(*args, **kwargs)
 
 
