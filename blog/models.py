@@ -16,7 +16,7 @@ from markdownx.utils import markdownify
 # Create your models here.
 
 # class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, 
+#     user = models.OneToOneField(User, on_delete=models.CASCADE,
 #         default=None, null=True, related_name='profile')
 #     avatar = models.ImageField(
 #         upload_to='media/avatars',
@@ -39,47 +39,39 @@ class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name_plural = 'Categories'
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('blog:category', kwargs={'name': self.name})
+        return reverse("blog:category", kwargs={"name": self.name})
 
 
 class Post(models.Model):
-    STATUS = (
-        ('DRAFT', 'Draft'),
-        ('PUBLISHED', 'Published'),
-    )
+    STATUS = (("DRAFT", "Draft"), ("PUBLISHED", "Published"))
 
     category = models.ManyToManyField(Category, blank=False)
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='posts')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     # picture = models.ImageField(upload_to='media', default='media/None/no-img.jpg')
     title = models.CharField(max_length=300)
-    slug = models.SlugField(
-        max_length=300,
-        unique_for_date='published_date')
-    content = MarkdownxField() # markdownx
+    slug = models.SlugField(max_length=300, unique_for_date="published_date")
+    content = MarkdownxField()  # markdownx
     published_date = models.DateTimeField(auto_now=True)
     allow_comments = models.BooleanField(default=True)
-    status = models.CharField(default='DRAFT', choices=STATUS, max_length=10)
+    status = models.CharField(default="DRAFT", choices=STATUS, max_length=10)
 
     # tags mechanism
     tags = TaggableManager(blank=True)
 
     class Meta:
-        ordering = ('-published_date', )
+        ordering = ("-published_date",)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog:details_post', kwargs={'slug': self.slug})
+        return reverse("blog:details_post", kwargs={"slug": self.slug})
 
     @property
     def formatted_markdown(self):

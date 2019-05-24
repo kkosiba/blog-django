@@ -12,8 +12,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 
 # class based views
-from django.views.generic.edit import (
-    CreateView, DeleteView, UpdateView, FormView)
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormView
 
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -22,11 +21,13 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 
-from django.views.generic.dates import (
-    YearArchiveView, MonthArchiveView, DayArchiveView)
+from django.views.generic.dates import YearArchiveView, MonthArchiveView, DayArchiveView
 
 from django.contrib.auth.mixins import (
-    LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin)
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+    PermissionRequiredMixin,
+)
 
 from django.db import transaction
 
@@ -34,39 +35,37 @@ from django.db import transaction
 class CategoryDatesMixin(object):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
+        context["categories"] = Category.objects.all()
         # get queryset of datetime objects for all published posts
-        context['dates'] = Post.objects.filter(
-            status='PUBLISHED').datetimes(field_name='published_date',
-                                          kind='month',
-                                          order='DESC')
-        context['recent_posts'] = Post.objects.filter(
-                                        status='PUBLISHED') \
-                                    .order_by('-published_date')[:3]
+        context["dates"] = Post.objects.filter(status="PUBLISHED").datetimes(
+            field_name="published_date", kind="month", order="DESC"
+        )
+        context["recent_posts"] = Post.objects.filter(status="PUBLISHED").order_by(
+            "-published_date"
+        )[:3]
         return context
 
 
 class ListPosts(CategoryDatesMixin, ListView):
     model = Post
-    template_name = 'blog/index.html'
-    context_object_name = 'posts'
-    ordering = ('-published_date',)
+    template_name = "blog/index.html"
+    context_object_name = "posts"
+    ordering = ("-published_date",)
     paginate_by = 2
 
 
 class ListByAuthor(CategoryDatesMixin, ListView):
     model = Post
-    context_object_name = 'posts'
-    template_name = 'blog/post_by_author.html'
+    context_object_name = "posts"
+    template_name = "blog/post_by_author.html"
     paginate_by = 2
-    ordering = ('-published_date',)
+    ordering = ("-published_date",)
 
     def get_queryset(self):
-        author = self.kwargs.get('author', None)
+        author = self.kwargs.get("author", None)
         results = []
         if author:
-            results = Post.objects.filter(
-                author__username=author)
+            results = Post.objects.filter(author__username=author)
         return results
 
     def get_context_data(self, **kwargs):
@@ -74,23 +73,22 @@ class ListByAuthor(CategoryDatesMixin, ListView):
         Pass author's name to the context
         """
         context = super().get_context_data(**kwargs)
-        context['author'] = self.kwargs.get('author', None)
+        context["author"] = self.kwargs.get("author", None)
         return context
 
 
 class ListByTag(CategoryDatesMixin, ListView):
     model = Post
-    context_object_name = 'posts'
-    template_name = 'blog/post_by_tag.html'
+    context_object_name = "posts"
+    template_name = "blog/post_by_tag.html"
     paginate_by = 2
-    ordering = ('-published_date',)
+    ordering = ("-published_date",)
 
     def get_queryset(self):
-        tag = self.kwargs.get('tag', None)
+        tag = self.kwargs.get("tag", None)
         results = []
         if tag:
-            results = Post.objects.filter(
-                tags__name=tag)
+            results = Post.objects.filter(tags__name=tag)
         return results
 
     def get_context_data(self, **kwargs):
@@ -98,23 +96,22 @@ class ListByTag(CategoryDatesMixin, ListView):
         Pass tag name to the context
         """
         context = super().get_context_data(**kwargs)
-        context['tag'] = self.kwargs.get('tag', None)
+        context["tag"] = self.kwargs.get("tag", None)
         return context
 
 
 class ListByCategory(CategoryDatesMixin, ListView):
     model = Post
-    context_object_name = 'posts'
-    template_name = 'blog/post_by_category.html'
+    context_object_name = "posts"
+    template_name = "blog/post_by_category.html"
     paginate_by = 2
-    ordering = ('-published_date',)
+    ordering = ("-published_date",)
 
     def get_queryset(self):
-        category = self.kwargs.get('name', None)
+        category = self.kwargs.get("name", None)
         results = []
         if category:
-            results = Post.objects.filter(
-                category__name=category)
+            results = Post.objects.filter(category__name=category)
         return results
 
     def get_context_data(self, **kwargs):
@@ -122,13 +119,13 @@ class ListByCategory(CategoryDatesMixin, ListView):
         Pass category's name to the context
         """
         context = super().get_context_data(**kwargs)
-        context['category'] = self.kwargs.get('name', None)
+        context["category"] = self.kwargs.get("name", None)
         return context
 
 
 class DetailsPost(CategoryDatesMixin, DetailView):
     model = Post
-    template_name = 'blog/post_detail.html'
+    template_name = "blog/post_detail.html"
 
 
 # Post archive views
@@ -136,7 +133,7 @@ class ArchiveMixin(object):
     model = Post
     date_field = "published_date"
     allow_future = False
-    context_object_name = 'posts'
+    context_object_name = "posts"
 
 
 class PostYearArchive(CategoryDatesMixin, ArchiveMixin, YearArchiveView):
@@ -148,13 +145,12 @@ class PostYearMonthArchive(CategoryDatesMixin, ArchiveMixin, MonthArchiveView):
 
 
 # Create, delete and update post views
-class AddPost(CategoryDatesMixin,
-              PermissionRequiredMixin,
-              LoginRequiredMixin,
-              CreateView):
+class AddPost(
+    CategoryDatesMixin, PermissionRequiredMixin, LoginRequiredMixin, CreateView
+):
     form_class = AddPostForm
-    permission_required = 'blog.add_post'
-    template_name = 'blog/post_form.html'
+    permission_required = "blog.add_post"
+    template_name = "blog/post_form.html"
 
     # to process request.user in the form
     def form_valid(self, form):
@@ -167,30 +163,28 @@ class AddPost(CategoryDatesMixin,
         To use AddPostForm with 'Update' instead of 'Add' text in update view
         """
         context = super().get_context_data(**kwargs)
-        context['update'] = False
+        context["update"] = False
         return context
 
 
-class PostDraftsList(CategoryDatesMixin,
-                     PermissionRequiredMixin,
-                     LoginRequiredMixin,
-                     ListView):
-    template_name = 'blog/list_drafts.html'
-    permission_required = 'blog.add_post'
-    context_object_name = 'posts'
+class PostDraftsList(
+    CategoryDatesMixin, PermissionRequiredMixin, LoginRequiredMixin, ListView
+):
+    template_name = "blog/list_drafts.html"
+    permission_required = "blog.add_post"
+    context_object_name = "posts"
 
     def get_queryset(self):
         return Post.objects.filter(
-            status='DRAFT',
-            author__username=self.request.user.username)
+            status="DRAFT", author__username=self.request.user.username
+        )
 
 
-class DeletePost(CategoryDatesMixin,
-                 LoginRequiredMixin,
-                 UserPassesTestMixin,
-                 DeleteView):
+class DeletePost(
+    CategoryDatesMixin, LoginRequiredMixin, UserPassesTestMixin, DeleteView
+):
     model = Post
-    success_url = reverse_lazy('blog:index')
+    success_url = reverse_lazy("blog:index")
 
     def test_func(self):
         """
@@ -199,10 +193,9 @@ class DeletePost(CategoryDatesMixin,
         return self.get_object().author.username == self.request.user.username
 
 
-class UpdatePost(CategoryDatesMixin,
-                 LoginRequiredMixin,
-                 UserPassesTestMixin, 
-                 UpdateView):
+class UpdatePost(
+    CategoryDatesMixin, LoginRequiredMixin, UserPassesTestMixin, UpdateView
+):
     model = Post
     form_class = AddPostForm
 
@@ -218,23 +211,25 @@ class UpdatePost(CategoryDatesMixin,
         To use AddPostForm with 'Update' instead of 'Add' text in update view
         """
         context = super().get_context_data(**kwargs)
-        context['update'] = True
+        context["update"] = True
         return context
 
 
 class SearchPosts(CategoryDatesMixin, ListView):
-    context_object_name = 'posts'
-    template_name = 'blog/post_search.html'
+    context_object_name = "posts"
+    template_name = "blog/post_search.html"
     paginate_by = 2
-    ordering = ('-published_date',)
+    ordering = ("-published_date",)
 
     def get_queryset(self):
-        search_query = self.request.GET.get('q', None)
+        search_query = self.request.GET.get("q", None)
         results = []
         if search_query:
             results = Post.objects.filter(
-                Q(category__name__icontains=search_query) |
-                Q(author__username__icontains=search_query) |
-                Q(title__icontains=search_query) |
-                Q(content__icontains=search_query)).distinct()
+                Q(category__name__icontains=search_query)
+                | Q(author__username__icontains=search_query)
+                | Q(title__icontains=search_query)
+                | Q(content__icontains=search_query)
+            ).distinct()
         return results
+

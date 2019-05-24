@@ -1,11 +1,18 @@
 from django import forms
 
 from django.forms import (
-    ModelForm, Textarea, TextInput, EmailField,
-    EmailInput, SelectMultiple, CharField,
-    PasswordInput, ClearableFileInput, Select,
+    ModelForm,
+    Textarea,
+    TextInput,
+    EmailField,
+    EmailInput,
+    SelectMultiple,
+    CharField,
+    PasswordInput,
+    ClearableFileInput,
+    Select,
     CheckboxInput,
-    )
+)
 
 from django.utils.text import slugify
 from django.utils.crypto import get_random_string
@@ -71,6 +78,7 @@ from django.core.exceptions import ValidationError
 #             instance.save()
 #         return instance
 
+
 def make_slug(instance, new_slug=None):
     """
     Function for creating unique slugs
@@ -82,7 +90,7 @@ def make_slug(instance, new_slug=None):
     # check if there exists a post with existing slug
     q = Post.objects.filter(slug=slug)
     if q.exists():
-        new_slug = '-'.join([slug, get_random_string(4,'0123456789')])
+        new_slug = "-".join([slug, get_random_string(4, "0123456789")])
         return make_slug(instance, new_slug=new_slug)
     return slug
 
@@ -90,34 +98,31 @@ def make_slug(instance, new_slug=None):
 class AddPostForm(ModelForm):
     class Meta:
         model = Post
-        exclude = ('slug', 'author', )
+        exclude = ("slug", "author")
         widgets = {
-            'title': TextInput(
+            "title": TextInput(
                 attrs={
-                    'required': True,
-                    'placeholder': 'Type your title here...',
-                    'class': 'form-control', }, ),
-            'category': SelectMultiple(
-                attrs={
-                    'required': True, 
-                    'class': 'form-control', }, ),
-            'status': Select(
-                attrs={
-                    'required': True, 
-                    'class': 'form-control', }, ),
-            'allow_comments': CheckboxInput(
-                attrs={
-                    'required': True, 
-                    'class': 'form-control', }, ),
+                    "required": True,
+                    "placeholder": "Type your title here...",
+                    "class": "form-control",
+                }
+            ),
+            "category": SelectMultiple(
+                attrs={"required": True, "class": "form-control"}
+            ),
+            "status": Select(attrs={"required": True, "class": "form-control"}),
+            "allow_comments": CheckboxInput(
+                attrs={"required": True, "class": "form-control"}
+            ),
         }
 
     def clean(self):
         cleaned_data = super().clean()
-        title = cleaned_data.get('title')
-        slug = cleaned_data.get('slug')
+        title = cleaned_data.get("title")
+        slug = cleaned_data.get("slug")
 
         if not slug and title:
-            cleaned_data['slug'] = slugify(title)
+            cleaned_data["slug"] = slugify(title)
 
         return cleaned_data
 
