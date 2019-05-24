@@ -1,9 +1,9 @@
-Django==2.1.5
+Django==2.1.8
 django-classy-tags==0.8.0
 django-markdownx==2.0.25
 django-taggit==0.23.0
 django-taggit-templatetags2==1.6.1
-djangorestframework==3.8.2
+djangorestframework==3.9.1
 docutils==0.14
 Markdown==3.0.1
 markdown2==2.3.5
