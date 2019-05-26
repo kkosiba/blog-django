@@ -3,3 +3,4 @@
 __pycache__
 blog/migrations
 env
+.vscode
