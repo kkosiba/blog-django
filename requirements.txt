@@ -1,3 +1,7 @@
+appdirs==1.4.3
+attrs==19.1.0
+black==19.3b0
+Click==7.0
 Django==2.1.8
 django-classy-tags==0.8.0
 django-markdownx==2.0.25
@@ -8,5 +12,7 @@ docutils==0.14
 Markdown==3.0.1
 markdown2==2.3.5
 Pillow==5.2.0
+psycopg2==2.8.2
 pytz==2018.5
 six==1.11.0
+toml==0.10.0
