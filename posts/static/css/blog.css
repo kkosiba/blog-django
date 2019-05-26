@@ -1,0 +1,33 @@
+body {
+  background-color: #fff;
+  color: #33444c;
+  font-family: "Open Sans", sans-serif;
+}
+
+a {
+  color: #0090c8;
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+.blog-title {
+  font-family: "Great Vibes", cursive;
+}
+
+.blog-post-title {
+  font-family: "Playfair Display", serif;
+}
+
+.blog-post {
+  font-family: "Open Sans", sans-serif;
+}
+
+.post p img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

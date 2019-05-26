@@ -1,0 +1,168 @@
+{% load static %}
+{% load taggit_templatetags2_tags %}
+{% load filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Open+Sans|Playfair+Display" rel="stylesheet">
+
+    <title>{% block title %} Django Blog {% endblock %}</title>
+</head>
+
+<body>
+    <!-- Facebook comments -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.1';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+    <div class="container">
+        <header class="container mt-4 text-center">
+            <a class="h1 text-dark blog-title" href="/">Django Blog</a>           
+        </header>
+
+        {% block nav-content %}
+        {% if categories %}
+        <div class="container my-4">
+            <ul class="list-unstyled list-inline text-center h5 font-weight-bold">
+            {% for category in categories %}
+                <li class="list-inline-item">
+                    <a href="{% url 'posts:category' name=category.name %}">{{ category.name }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endblock %}
+
+        {% block editor-panel %}
+        <!-- AUTHENTICATED USER WITH PERMISSIONS PANEL -->
+        {% if user.is_authenticated and perms.posts.add_post %}
+        <!-- it's enough to check permissions for adding posts; 
+            changing and deleting is implied
+        -->
+        <div class="container my-4">
+            <hr>
+            <ul class="list-unstyled list-inline text-center font-weight-bold">
+                <li class="list-inline-item">Editor's Panel:</li>
+                <li class="list-inline-item"><a href="{% url 'posts:add_post' %}">New post</a></li>
+                <li class="list-inline-item"><a href="{% url 'posts:list_drafts' %}">Your drafts</a></li>
+                <li class="list-inline-item"><a href="{% url 'posts:author' author=user.username %}">Your posts</a></li>
+            </ul>                           
+            <hr>
+        </div>
+        {% endif %}
+        {% endblock %}
+
+        <main class="container">
+            <!-- MAIN CONTENT -->
+            {% block content %} {% endblock %}
+        </main>
+
+
+        <!-- FOOTER -->
+        <footer class="py-3">
+            <div class="container">
+                {% block footer-content %}
+                <div class="row py-4">
+                    <div class="col-md-4">
+                        <form method="GET" action="{% url 'posts:search' %}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search..." name="q">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <p>
+                            <i class="fas fa-clock"></i>&nbsp;<b>Recent posts</b>
+                            <ul class="list-unstyled mt-2">
+                                {% for post in recent_posts %}
+                                    <li>
+                                        &raquo;&nbsp;<a href="{% url 'posts:details_post' slug=post.slug %}">{{ post }}</a>
+                                    </li>
+                                {% empty %}
+                                    <p>No posts.</p>
+                                {% endfor %}
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-archive"></i>&nbsp;<b>Archives</b>
+                        <ul class="list-unstyled mt-2">
+                            {% for date in dates %}
+                                <li>
+                                    <a href="{% url 'posts:ym_archive' year=date.year month=date.month %}">{{ date.month|month_name }} {{ date.year }}</a>
+                                </li>
+                            {% empty %}
+                                <p>Nothing to display.</p>
+                            {% endfor %}
+                        </ul>
+                        <hr>
+                        <i class="fas fa-tag"></i><b>Tags</b>
+                        <p>
+                            {% get_tagcloud as tags %}
+                            <ul class="list-unstyled list-inline font-weight-bold mt-2">
+                            {% for tag in tags %}
+                                <li class="list-inline-item p-1">
+                                    <a class="btn btn-sm btn-secondary" href="{% url 'posts:tag' tag=tag %}">{{ tag }}</a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-info-circle"></i>&nbsp;<b>About</b>
+                        <p>
+                            Vestibulum congue risus ornare, dictum nunc ut, venenatis ex. Fusce rhoncus, tellus quis mattis egestas, nunc justo luctus nibh, ultrices auctor orci orci ac ligula.
+                        </p>
+                        <hr>
+                        {% if user.is_authenticated %}
+                            <div class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/" type="button" class="btn btn-success active"><b>{{ user.username.capitalize }}</b> <i class="fas fa-user"></i></button>
+                                    <a href="{% url 'accounts:logout' %}?next={{ request.path | urlencode }}" class="btn btn-warning">Logout <i class="fas fa-sign-out-alt"></i></a>
+                                </div>
+                            </div>
+                        {% else %}
+                        <div class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'accounts:login' %}?next={{ request.path | urlencode }}" class="btn btn-secondary">Sign In <i class="fas fa-sign-in-alt"></i></a>
+                                <a href="{% url 'accounts:signup' %}" class="btn btn-outline-secondary">Sign Up <i class="fas fa-user-plus"></i></a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endblock %}
+                <p class="m-0 text-center text-dark">
+                    Copyright &copy; {% now "Y" %} by Author<br>
+                    <a href="{% url 'contact:email-form' %}">Contact</a>&nbsp;<a href="{% url 'feed' %}">Subscribe</a><br>
+                    <a href="#">Back to top</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

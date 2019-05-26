@@ -1,0 +1,26 @@
+{% extends 'base.html' %} 
+
+{% block title %} Your drafts {% endblock %} 
+
+{% block content %}
+<h3>Your drafts:</h3>
+<hr />
+{% for post in posts %}
+<div class="post">
+  <h2>
+    <a
+      href="{% url 'posts:update_post' slug=post.slug %}"
+      class="text-danger"
+    >
+      {{ post.title }}
+    </a>
+  </h2>
+</div>
+<hr />
+{% empty %}
+<p>No drafts.</p>
+{% endfor %}
+<!-- PAGINATION -->
+{% include 'posts/pagination.html' %}
+
+{% endblock %}

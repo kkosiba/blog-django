@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+    <h3>Posts by {{ author.capitalize }}:</h3>
+    <hr>
+    <!-- Generic post listing template -->
+    {% include 'posts/post_list_generic.html' %}
+    <!-- PAGINATION -->
+    {% include 'posts/pagination.html' %}
+{% endblock %}
