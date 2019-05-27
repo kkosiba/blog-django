@@ -79,7 +79,7 @@
         <footer class="py-3">
             <div class="container">
                 {% block footer-content %}
-                <div class="row py-4">
+                <div class="row mt-4">
                     <div class="col-md-4">
                         <form method="GET" action="{% url 'posts:search' %}">
                             <div class="input-group">
@@ -89,8 +89,7 @@
                                 </div>
                             </div>
                         </form>
-                        <hr>
-                        <p>
+                        <p class="mt-4">
                             <i class="fas fa-clock"></i>&nbsp;<b>Recent posts</b>
                             <ul class="list-unstyled mt-2">
                                 {% for post in recent_posts %}
@@ -114,7 +113,6 @@
                                 <p>Nothing to display.</p>
                             {% endfor %}
                         </ul>
-                        <hr>
                         <i class="fas fa-tag"></i><b>Tags</b>
                         <p>
                             {% get_tagcloud as tags %}
@@ -132,7 +130,6 @@
                         <p>
                             Vestibulum congue risus ornare, dictum nunc ut, venenatis ex. Fusce rhoncus, tellus quis mattis egestas, nunc justo luctus nibh, ultrices auctor orci orci ac ligula.
                         </p>
-                        <hr>
                         {% if user.is_authenticated %}
                             <div class="text-center">
                                 <div class="btn-group btn-group-sm" role="group">
@@ -151,7 +148,7 @@
                     </div>
                 </div>
                 {% endblock %}
-                <p class="m-0 text-center text-dark">
+                <p class="mt-4 mx-0 text-center text-dark">
                     Copyright &copy; {% now "Y" %} by Author<br>
                     <a href="{% url 'contact:email-form' %}">Contact</a>&nbsp;<a href="{% url 'feed' %}">Subscribe</a><br>
                     <a href="#">Back to top</a>
