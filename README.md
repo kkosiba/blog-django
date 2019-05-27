@@ -1,60 +1,71 @@
 # blog-django
 Simple Django blogging app
 
- ![blog](https://github.com/ncunx/blog-django/blob/master/pics/main.png)
+ ![blog](https://github.com/kkosiba/blog-django/blob/master/pics/main.png)
 
-For more pictures, see `pics` directory. See also `https://ncunx.pythonanywhere.com/` for the deployed version.
+For more pictures, see `pics` directory. See also `https://django-blog-1k4z.herokuapp.com/` for the deployed version. With sample content. For testing purposes several accounts are created. Credentials: `(X, Xpassword)`, where `X=anna, bob, chris`.
 
 Features
 --------
-
 1. User authorisation and registration
 2. Basic user permissions: admin, editor, normal.
-
-	[//]: # "- Normal users can view posts and comment (after logging in)."
 	- Editors can add posts, update/delete the existing ones for which they have suitable
 	  permissions/ownership.
 	- admin is superuser as usual.
 3. Facebook comments
 4. Tags
 5. Search, year/month archives, sort by post author, category, tags.
-6. Basic REST API provided by Django REST framework (available at `localhost:8000/api/`)
+6. Basic REST API provided by Django REST framework (available at `/api`)
 
 Main requirements
 ------------
 
 1. `python` 3.5, 3.6, 3.7
 2. `Django` 2.1.8
-3. `PostreSQL` 11.1 (see below)
+3. `PostreSQL` 11.1
 
 This project also uses a few external packages (see `requirements.txt` file for details).
 For instance, tags support is provided by [django-taggit](https://github.com/alex/django-taggit).
 
 
-Usage
------
+## How to set up
 
-1. Create a new directory and change to it:
+Firstly, create a new directory and change to it:
 
 `mkdir blog-django && cd blog-django`
 
-2. Clone the repository:
+Then, clone this repository to the current directory:
 
-`git clone https://github.com/ncunx/blog-django.git .`
+`git clone https://github.com/kkosiba/blog-django.git .`
 
-3. Set up a virtual environment and activate it:
+
+For the backend to work, one needs to setup database like SQLite or PostgreSQL on a local machine. This project uses PostgreSQL by default (see [Django documentation](https://docs.djangoproject.com/en/2.1/ref/settings/#databases) for different setup). This process may vary from one OS to another, eg. on Arch Linux one can follow a straightforward guide [here](https://wiki.archlinux.org/index.php/PostgreSQL).
+
+The database settings are specified in `website/settings/local.py`. In particular the default database name is `BlogDjango`, which can be created from the PostgreSQL shell by running `createdb BlogDjango`.
+
+
+Next, set up a virtual environment and activate it:
 
 `python3 -m venv env && source env/bin/activate`
 
-4. Install required packages:
+Install required packages:
 
 `pip3 install -r requirements.txt`
 
-The project is all set up. Run a local server with
+Next, perform migration:
 
-`python3 manage.py runserver`
+`python3 manage.py migrate --settings=website.settings.local`
+
+The setup is complete. Run a local server with
+
+`python3 manage.py runserver --settings=website.settings.local`
 
 The blog should be available at `localhost:8000`.
 
-5. For testing purposes several accounts are created. Credentials: `(admin, passwordadmin), (userN, passworduserN)`, where `N=1,2,3,4`.
+<!-- ### Alternative setup using Docker
 
+The easiest way to get this project up and running is via [Docker](https://www.docker.com/). See [docs](https://docs.docker.com/get-started/) to get started. -->
+
+## What's next?
+
+At this point, one may want to create a superuser account, create the Editors group and add a few users to this group.
