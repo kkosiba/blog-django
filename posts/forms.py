@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
 from .models import Category, Post
+from taggit.forms import TagWidget
 
 
 def make_slug(instance, new_slug=None):
@@ -34,10 +35,9 @@ class AddPostForm(forms.ModelForm):
             "category": forms.SelectMultiple(
                 attrs={"required": True, "class": "form-control"}
             ),
-            "status": forms.Select(attrs={"required": True, "class": "form-control"}),
-            "allow_comments": forms.CheckboxInput(
-                attrs={"required": True, "class": "form-control"}
-            ),
+            "status": forms.Select(attrs={"class": "form-control"}),
+            "allow_comments": forms.CheckboxInput(attrs={"class": "form-control"}),
+            "tags": TagWidget(attrs={"class": "form-control"}),
         }
 
     def clean(self):
