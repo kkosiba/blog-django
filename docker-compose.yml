@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  migration:
+    build: .
+    command: python3 manage.py migrate --settings=website.settings.local-docker
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - db
+  web:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000 --settings=website.settings.local-docker
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - migration
