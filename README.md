@@ -30,6 +30,16 @@ For instance, tags support is provided by [django-taggit](https://github.com/ale
 
 ## How to set up
 
+### Setup using Docker
+
+The easiest way to get this project up and running is via [Docker](https://www.docker.com/). See [docs](https://docs.docker.com/get-started/) to get started. Once set up run the following command:
+
+`docker-compose up`
+
+It may take a while for the process to complete, as Docker needs to pull required dependencies. Once it is done, the application should be accessible at `0.0.0.0:8000`. 
+
+### Manual setup
+
 Firstly, create a new directory and change to it:
 
 `mkdir blog-django && cd blog-django`
@@ -61,10 +71,6 @@ The setup is complete. Run a local server with
 `python3 manage.py runserver --settings=website.settings.local`
 
 The blog should be available at `localhost:8000`.
-
-<!-- ### Alternative setup using Docker
-
-The easiest way to get this project up and running is via [Docker](https://www.docker.com/). See [docs](https://docs.docker.com/get-started/) to get started. -->
 
 ## What's next?
 
