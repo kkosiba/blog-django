@@ -49,7 +49,7 @@ Then, clone this repository to the current directory:
 `git clone https://github.com/kkosiba/blog-django.git .`
 
 
-For the backend to work, one needs to setup database like SQLite or PostgreSQL on a local machine. This project uses PostgreSQL by default (see [Django documentation](https://docs.djangoproject.com/en/2.1/ref/settings/#databases) for different setup). This process may vary from one OS to another, eg. on Arch Linux one can follow a straightforward guide [here](https://wiki.archlinux.org/index.php/PostgreSQL).
+Next, one needs to setup database like SQLite or PostgreSQL on a local machine. This project uses PostgreSQL by default (see [Django documentation](https://docs.djangoproject.com/en/2.1/ref/settings/#databases) for different setup). This process may vary from one OS to another, eg. on Arch Linux one can follow a straightforward guide [here](https://wiki.archlinux.org/index.php/PostgreSQL).
 
 The database settings are specified in `website/settings/local.py`. In particular the default database name is `BlogDjango`, which can be created from the PostgreSQL shell by running `createdb BlogDjango`.
 
