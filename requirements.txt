@@ -13,7 +13,7 @@ djangorestframework==3.9.1
 docutils==0.14
 gunicorn==19.9.0
 Markdown==3.0.1
-markdown2==2.3.5
+markdown2==2.4.0
 Pillow==5.2.0
 psycopg2==2.8.2
 pytz==2018.5
