@@ -3,7 +3,7 @@ attrs==19.1.0
 black==19.3b0
 Click==7.0
 dj-database-url==0.5.0
-Django==2.1.10
+Django==2.2.28
 django-classy-tags==0.8.0
 django-heroku==0.3.1
 django-markdownx==2.0.25
